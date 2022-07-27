@@ -9624,6 +9624,7 @@ static bool setting_append_list(
                &subgroup_info,
                parent_group);
 
+         // Remove Audio Mixer and Menu Sounds
 /*#ifdef HAVE_AUDIOMIXER
          CONFIG_ACTION(
                list, list_info,
@@ -9750,6 +9751,7 @@ static bool setting_append_list(
             SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
          }
 
+         // Remove On-Screen Display Settings
          /* CONFIG_ACTION(
                list, list_info,
                MENU_ENUM_LABEL_ONSCREEN_DISPLAY_SETTINGS,
@@ -9884,6 +9886,7 @@ static bool setting_append_list(
                parent_group);
 #endif
 
+         // Remove Updater from Networking
          /* CONFIG_ACTION(
                list, list_info,
                MENU_ENUM_LABEL_UPDATER_SETTINGS,
@@ -9966,6 +9969,7 @@ static bool setting_append_list(
                &subgroup_info,
                parent_group);
 
+         // Remove Privacy Settings
          /* CONFIG_ACTION(
                list, list_info,
                MENU_ENUM_LABEL_PRIVACY_SETTINGS,
@@ -11346,8 +11350,9 @@ static bool setting_append_list(
 
             parent_group = msg_hash_to_str(MENU_ENUM_LABEL_SETTINGS);
 
-            START_SUB_GROUP(list, list_info, "State", &group_info, &subgroup_info, parent_group);
+           /* START_SUB_GROUP(list, list_info, "State", &group_info, &subgroup_info, parent_group); */
 
+            // Remove Suspend Screensaver
 /* #if !defined(RARCH_CONSOLE) && !defined(RARCH_MOBILE)
             CONFIG_BOOL(
                   list, list_info,
@@ -11366,14 +11371,15 @@ static bool setting_append_list(
             SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
 #endif */
 
-            END_SUB_GROUP(list, list_info, parent_group);
+           /* END_SUB_GROUP(list, list_info, parent_group);
             START_SUB_GROUP(list, list_info, "Platform-specific", &group_info, &subgroup_info, parent_group);
 
             video_driver_menu_settings((void**)list, (void*)list_info, (void*)&group_info, (void*)&subgroup_info, parent_group);
 
             END_SUB_GROUP(list, list_info, parent_group);
-            START_SUB_GROUP(list, list_info, "Monitor", &group_info, &subgroup_info, parent_group);
+            START_SUB_GROUP(list, list_info, "Monitor", &group_info, &subgroup_info, parent_group); */
 
+            // Remove Monitor Index
             /*CONFIG_UINT(
                   list, list_info,
                   &settings->uints.video_monitor_index,
@@ -11410,6 +11416,7 @@ static bool setting_append_list(
                   SD_FLAG_NONE);
 #endif
 
+            // Remove GPU Index
 /*#ifdef HAVE_VULKAN
             if (string_is_equal(video_driver_get_ident(), "vulkan"))
             {
@@ -12240,6 +12247,8 @@ static bool setting_append_list(
             else
 #endif
             {
+
+               // Remove Bilinear Filtering Option from Video
                /* CONFIG_BOOL(
                      list, list_info,
                      &settings->bools.video_smooth,
@@ -12652,6 +12661,8 @@ static bool setting_append_list(
              * is shown in 'Settings > Video'. It therefore
              * requires an explicit guard to prevent display
              * on unsupported platforms */
+
+            // Remove Shader Delay
 /*#if defined(HAVE_CG) || defined(HAVE_GLSL) || defined(HAVE_SLANG) || defined(HAVE_HLSL)
             if (video_shader_any_supported())
             {
@@ -12766,6 +12777,7 @@ static bool setting_append_list(
                   );
             SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
 
+            // Remove Video Filter
             /*CONFIG_PATH(
                   list, list_info,
                   settings->paths.path_softfilter_plugin,
@@ -13033,6 +13045,7 @@ static bool setting_append_list(
                SD_FLAG_NONE
                );
 
+         // Remove Audio Mixer Mute
 /* #ifdef HAVE_AUDIOMIXER
          CONFIG_BOOL(
                list, list_info,
@@ -13081,6 +13094,7 @@ static bool setting_append_list(
          (*list)[list_info->index - 1].action_ok = &setting_action_ok_uint;
          menu_settings_list_current_add_range(list, list_info, -80, 12, 1.0, true, true);
 
+         // Remove Audio Mixer Volume
 /* #ifdef HAVE_AUDIOMIXER
          CONFIG_FLOAT(
                list, list_info,
@@ -13233,6 +13247,7 @@ static bool setting_append_list(
                &subgroup_info,
                parent_group);
 
+         // Remove External Audio Device
 /* #if !defined(RARCH_CONSOLE)
          CONFIG_STRING(
                list, list_info,
@@ -13268,6 +13283,7 @@ static bool setting_append_list(
          menu_settings_list_current_add_range(list, list_info, 1000, 192000, 100.0, true, true);
          SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_ADVANCED);
 
+         // Remove DSP Plugin Option
          /*CONFIG_PATH(
                list, list_info,
                settings->paths.path_audio_dsp_plugin,
@@ -13486,6 +13502,7 @@ static bool setting_append_list(
             menu_settings_list_current_add_range(list, list_info, 1, 4, 1, true, true);
 #endif
 
+            // Remove Touch Scale
             /* CONFIG_UINT(
                   list, list_info,
                   &settings->uints.input_touch_scale,
@@ -13719,6 +13736,7 @@ static bool setting_append_list(
                   );
 #endif
 
+            // Remove Auxilary Sensor, Mouse Grab and Game Focus Options
             /* CONFIG_BOOL(
                   list, list_info,
                   &settings->bools.input_sensors_enable,
@@ -14194,6 +14212,7 @@ static bool setting_append_list(
                SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
                (*list)[list_info->index - 1].ui_type   = ST_UI_TYPE_UINT_COMBOBOX;
 
+               // Remove Recording Directory
             /* CONFIG_DIR(
                list, list_info,
                recording_st->output_dir,
@@ -14580,6 +14599,7 @@ static bool setting_append_list(
          (*list)[list_info->index - 1].action_right  = &setting_bool_action_right_with_refresh;
          MENU_SETTINGS_LIST_CURRENT_ADD_CMD(list, list_info, CMD_EVENT_REINIT);
 
+         // Remove Notification Font
          /* CONFIG_PATH(
                list, list_info,
                settings->paths.path_font,
@@ -15754,6 +15774,7 @@ static bool setting_append_list(
                &setting_get_string_representation_uint_quit_on_close_content;
          menu_settings_list_current_add_range(list, list_info, 0, QUIT_ON_CLOSE_CONTENT_LAST-1, 1, true, true);
 
+         // Remove Screensaver Timeout, Animation, Mouse and Pointer Options
          /*CONFIG_UINT(
                list, list_info,
                &settings->uints.menu_screensaver_timeout,
@@ -16300,6 +16321,7 @@ static bool setting_append_list(
                general_read_handler,
                SD_FLAG_NONE);
 
+         // Remove Kiosk Mode
          /*if (string_is_equal(settings->arrays.menu_driver, "xmb") || string_is_equal(settings->arrays.menu_driver, "ozone"))
          {
             CONFIG_BOOL(
@@ -16925,6 +16947,7 @@ static bool setting_append_list(
                   general_read_handler,
                   SD_FLAG_NONE);
 
+            // Remove Image, Music and Video
 /*#ifdef HAVE_IMAGEVIEWER
             CONFIG_BOOL(
                   list, list_info,
@@ -17063,6 +17086,7 @@ static bool setting_append_list(
                   general_read_handler,
                   SD_FLAG_NONE);
 
+            // Remove Show Explore 
 //#if defined(HAVE_LIBRETRODB)
 //            CONFIG_BOOL(
 //                  list, list_info,
@@ -17387,6 +17411,7 @@ static bool setting_append_list(
          }
 #endif
 
+         // Remove Start Screen
          /*CONFIG_BOOL(
                list, list_info,
                &settings->bools.menu_show_start_screen,
@@ -17631,6 +17656,7 @@ static bool setting_append_list(
          menu_settings_list_current_add_range(list, list_info, 0, MENU_TIMEDATE_DATE_SEPARATOR_LAST - 1, 1, true, true);
          (*list)[list_info->index - 1].ui_type   = ST_UI_TYPE_UINT_COMBOBOX;
 
+         // Remove Battery Level
          /*CONFIG_BOOL(
                list, list_info,
                &settings->bools.menu_battery_level_enable,
@@ -17730,6 +17756,7 @@ static bool setting_append_list(
 
          START_SUB_GROUP(list, list_info, "State", &group_info, &subgroup_info, parent_group);
 
+         // Remove Built-In Playable Options
          /*CONFIG_BOOL(
                list, list_info,
                &settings->bools.multimedia_builtin_mediaplayer_enable,
@@ -18044,6 +18071,7 @@ static bool setting_append_list(
 
          START_SUB_GROUP(list, list_info, "State", &group_info, &subgroup_info, parent_group);
 
+         // Remove Pause when RA Not Active
          /*CONFIG_BOOL(
                list, list_info,
                &settings->bools.pause_nonactive,
@@ -18388,6 +18416,7 @@ static bool setting_append_list(
                general_read_handler,
                SD_FLAG_NONE);
 
+         // Remove Show On-Screen Display
          /* CONFIG_BOOL(
                list, list_info,
                &settings->bools.settings_show_onscreen_display,
@@ -18433,6 +18462,7 @@ static bool setting_append_list(
                general_read_handler,
                SD_FLAG_NONE);
 
+         // Remove Show Accessibility and Power Management 
          /*CONFIG_BOOL(
                list, list_info,
                &settings->bools.settings_show_accessibility,
@@ -20440,6 +20470,7 @@ static bool setting_append_list(
                parent_group);
 #endif
 
+         // Remove YouTube, Twicth and Facebook Accounts  
 /* #ifdef HAVE_NETWORKING
          CONFIG_ACTION(
                list, list_info,
@@ -20716,6 +20747,7 @@ static bool setting_append_list(
                general_read_handler);
          (*list)[list_info->index - 1].action_start = directory_action_start_generic;
 
+         // Remove Cores Directory
          /* CONFIG_DIR(
                list, list_info,
                settings->paths.directory_libretro,
@@ -20795,6 +20827,7 @@ static bool setting_append_list(
                general_read_handler);
          (*list)[list_info->index - 1].action_start = directory_action_start_generic;
 
+         // Remove Video Filter and Audio Filter Directories 
          /* CONFIG_DIR(
                list, list_info,
                settings->paths.directory_video_filter,
@@ -20842,7 +20875,7 @@ static bool setting_append_list(
          (*list)[list_info->index - 1].action_start = directory_action_start_generic;
 #endif
 
-         
+         // Remove Recording Directory
          /* if (string_is_not_equal(settings->arrays.record_driver, "null"))
          {
             CONFIG_DIR(
@@ -20999,6 +21032,7 @@ static bool setting_append_list(
                general_read_handler);
          (*list)[list_info->index - 1].action_start = directory_action_start_generic;
 
+         // Remove Image, Music and Video Directories
          /* CONFIG_DIR(
                list, list_info,
                settings->paths.directory_content_image_history,
@@ -21089,6 +21123,7 @@ static bool setting_append_list(
                general_read_handler);
          (*list)[list_info->index - 1].action_start = directory_action_start_generic;
 
+         // Remove Cache Directory
          /* CONFIG_DIR(
                list, list_info,
                settings->paths.directory_cache,

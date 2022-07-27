@@ -6147,6 +6147,7 @@ unsigned menu_displaylist_build_list(
             }
          }
          break;
+         // Remove Haptic Feedback Settings
       case DISPLAYLIST_INPUT_HOTKEY_BINDS_LIST:
          {
             bool hotkey_enable_found   = false;
@@ -6508,6 +6509,8 @@ unsigned menu_displaylist_build_list(
                   MENU_ENUM_LABEL_AUDIO_ENABLE,
                   PARSE_ONLY_BOOL, false) == 0)
             count++;
+
+         // Remove Audio Driver From Audio
          /* if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
                   MENU_ENUM_LABEL_AUDIO_DRIVER,
                   PARSE_ONLY_STRING_OPTIONS, false) == 0)
@@ -6965,6 +6968,8 @@ unsigned menu_displaylist_build_list(
                   MENU_ENUM_LABEL_INPUT_BIND_HOLD,
                   PARSE_ONLY_UINT, false) == 0)
             count++;
+
+         // Moves Rumble Gain Out Of Haptic Feeback Sub-Menu
          if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
             MENU_ENUM_LABEL_INPUT_RUMBLE_GAIN,
             PARSE_ONLY_UINT, false) == 0)
@@ -8252,6 +8257,8 @@ unsigned menu_displaylist_build_list(
             menu_displaylist_build_info_selective_t build_list[] = {
                {MENU_ENUM_LABEL_MENU_VIEWS_SETTINGS,                                   PARSE_ACTION,      true},
                {MENU_ENUM_LABEL_MENU_SETTINGS,                                         PARSE_ACTION,      true},
+
+               // Added On-Screen Display and Overlay to User Interface
                {MENU_ENUM_LABEL_ONSCREEN_NOTIFICATIONS_SETTINGS,                       PARSE_ACTION,      true},
                {MENU_ENUM_LABEL_ONSCREEN_OVERLAY_SETTINGS,                             PARSE_ACTION,      true},
                {MENU_ENUM_LABEL_MENU_DRIVER,                                           PARSE_ONLY_STRING_OPTIONS, true},
