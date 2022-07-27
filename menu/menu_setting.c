@@ -62,7 +62,6 @@
 #include "menu_setting.h"
 #include "menu_cbs.h"
 #include "menu_driver.h"
-#include "../camera/camera_driver.h"
 #include "../gfx/gfx_animation.h"
 #ifdef HAVE_GFX_WIDGETS
 #include "../gfx/gfx_widgets.h"
@@ -84,9 +83,6 @@
 #ifdef HAVE_BLUETOOTH
 #include "../bluetooth/bluetooth_driver.h"
 #endif
-#include "../midi_driver.h"
-#include "../location_driver.h"
-#include "../record/record_driver.h"
 #include "../tasks/tasks_internal.h"
 #include "../config.def.h"
 #include "../ui/ui_companion_driver.h"
@@ -9628,7 +9624,7 @@ static bool setting_append_list(
                &subgroup_info,
                parent_group);
 
-#ifdef HAVE_AUDIOMIXER
+/*#ifdef HAVE_AUDIOMIXER
          CONFIG_ACTION(
                list, list_info,
                MENU_ENUM_LABEL_AUDIO_MIXER_SETTINGS,
@@ -9647,7 +9643,7 @@ static bool setting_append_list(
                &group_info,
                &subgroup_info,
                parent_group);
-#endif
+#endif*/
 
          CONFIG_ACTION(
                list, list_info,
@@ -9754,14 +9750,14 @@ static bool setting_append_list(
             SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
          }
 
-         CONFIG_ACTION(
+         /* CONFIG_ACTION(
                list, list_info,
                MENU_ENUM_LABEL_ONSCREEN_DISPLAY_SETTINGS,
                MENU_ENUM_LABEL_VALUE_ONSCREEN_DISPLAY_SETTINGS,
                &group_info,
                &subgroup_info,
                parent_group);
-         SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
+         SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED); */
 
 #ifdef HAVE_OVERLAY
          CONFIG_ACTION(
@@ -9888,13 +9884,13 @@ static bool setting_append_list(
                parent_group);
 #endif
 
-         CONFIG_ACTION(
+         /* CONFIG_ACTION(
                list, list_info,
                MENU_ENUM_LABEL_UPDATER_SETTINGS,
                MENU_ENUM_LABEL_VALUE_UPDATER_SETTINGS,
                &group_info,
                &subgroup_info,
-               parent_group);
+               parent_group);*/
 #ifdef HAVE_LAKKA
          SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_ADVANCED);
 #endif
@@ -9970,13 +9966,13 @@ static bool setting_append_list(
                &subgroup_info,
                parent_group);
 
-         CONFIG_ACTION(
+         /* CONFIG_ACTION(
                list, list_info,
                MENU_ENUM_LABEL_PRIVACY_SETTINGS,
                MENU_ENUM_LABEL_VALUE_PRIVACY_SETTINGS,
                &group_info,
                &subgroup_info,
-               parent_group);
+               parent_group); */
 
          CONFIG_ACTION(
                list, list_info,
@@ -10091,14 +10087,15 @@ static bool setting_append_list(
 
             j++;
 
-            string_options_entries[j].target         = settings->arrays.camera_driver;
+            // Removes Camera Option
+            /*string_options_entries[j].target         = settings->arrays.camera_driver;
             string_options_entries[j].len            = sizeof(settings->arrays.camera_driver);
             string_options_entries[j].name_enum_idx  = MENU_ENUM_LABEL_CAMERA_DRIVER;
             string_options_entries[j].SHORT_enum_idx = MENU_ENUM_LABEL_VALUE_CAMERA_DRIVER;
             string_options_entries[j].default_value  = config_get_default_camera();
             string_options_entries[j].values         = config_get_camera_driver_options();
 
-            j++;
+            j++;*/
 
 #ifdef HAVE_BLUETOOTH
             string_options_entries[j].target         = settings->arrays.bluetooth_driver;
@@ -10121,15 +10118,15 @@ static bool setting_append_list(
 
             j++;
 #endif
-
-            string_options_entries[j].target         = settings->arrays.location_driver;
+            // Removes Location Option
+            /*string_options_entries[j].target         = settings->arrays.location_driver;
             string_options_entries[j].len            = sizeof(settings->arrays.location_driver);
             string_options_entries[j].name_enum_idx  = MENU_ENUM_LABEL_LOCATION_DRIVER;
             string_options_entries[j].SHORT_enum_idx = MENU_ENUM_LABEL_VALUE_LOCATION_DRIVER;
             string_options_entries[j].default_value  = config_get_default_location();
             string_options_entries[j].values         = config_get_location_driver_options();
 
-            j++;
+            j++;*/
 
             string_options_entries[j].target         = settings->arrays.menu_driver;
             string_options_entries[j].len            = sizeof(settings->arrays.menu_driver);
@@ -10140,7 +10137,8 @@ static bool setting_append_list(
 
             j++;
 
-            string_options_entries[j].target          = settings->arrays.record_driver;
+            // Removes Recording Option
+            /*string_options_entries[j].target          = settings->arrays.record_driver;
             string_options_entries[j].len             = sizeof(settings->arrays.record_driver);
             string_options_entries[j].name_enum_idx   = MENU_ENUM_LABEL_RECORD_DRIVER;
             string_options_entries[j].SHORT_enum_idx  = MENU_ENUM_LABEL_VALUE_RECORD_DRIVER;
@@ -10149,6 +10147,7 @@ static bool setting_append_list(
 
             j++;
 
+            // Removes MIDI Option
             string_options_entries[j].target          = settings->arrays.midi_driver;
             string_options_entries[j].len             = sizeof(settings->arrays.midi_driver);
             string_options_entries[j].name_enum_idx   = MENU_ENUM_LABEL_MIDI_DRIVER;
@@ -10156,7 +10155,7 @@ static bool setting_append_list(
             string_options_entries[j].default_value   = config_get_default_midi();
             string_options_entries[j].values          = config_get_midi_driver_options();
 
-            j++;
+            j++;*/
 
             for (i = 0; i < j; i++)
             {
@@ -11349,7 +11348,7 @@ static bool setting_append_list(
 
             START_SUB_GROUP(list, list_info, "State", &group_info, &subgroup_info, parent_group);
 
-#if !defined(RARCH_CONSOLE) && !defined(RARCH_MOBILE)
+/* #if !defined(RARCH_CONSOLE) && !defined(RARCH_MOBILE)
             CONFIG_BOOL(
                   list, list_info,
                   &settings->bools.ui_suspend_screensaver_enable,
@@ -11365,7 +11364,7 @@ static bool setting_append_list(
                   general_read_handler,
                   SD_FLAG_NONE);
             SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
-#endif
+#endif */
 
             END_SUB_GROUP(list, list_info, parent_group);
             START_SUB_GROUP(list, list_info, "Platform-specific", &group_info, &subgroup_info, parent_group);
@@ -11375,7 +11374,7 @@ static bool setting_append_list(
             END_SUB_GROUP(list, list_info, parent_group);
             START_SUB_GROUP(list, list_info, "Monitor", &group_info, &subgroup_info, parent_group);
 
-            CONFIG_UINT(
+            /*CONFIG_UINT(
                   list, list_info,
                   &settings->uints.video_monitor_index,
                   MENU_ENUM_LABEL_VIDEO_MONITOR_INDEX,
@@ -11392,7 +11391,7 @@ static bool setting_append_list(
                &setting_get_string_representation_uint_video_monitor_index;
 
             /* prevent unused function warning on unsupported builds */
-            (void)setting_get_string_representation_int_gpu_index;
+            // (void)setting_get_string_representation_int_gpu_index;
 
 #ifdef ANDROID
             CONFIG_BOOL(
@@ -11411,7 +11410,7 @@ static bool setting_append_list(
                   SD_FLAG_NONE);
 #endif
 
-#ifdef HAVE_VULKAN
+/*#ifdef HAVE_VULKAN
             if (string_is_equal(video_driver_get_ident(), "vulkan"))
             {
                CONFIG_INT(
@@ -11489,7 +11488,7 @@ static bool setting_append_list(
                (*list)[list_info->index - 1].get_string_representation =
                   &setting_get_string_representation_int_gpu_index;
             }
-#endif
+#endif*/
 
 #ifdef WIIU
             CONFIG_BOOL(
@@ -11508,7 +11507,8 @@ static bool setting_append_list(
                   SD_FLAG_NONE);
 #endif
 
-            if (video_driver_has_windowed())
+            // Remove Fullscreen/Windowed Mode Tabs
+            /*if (video_driver_has_windowed())
             {
                CONFIG_ACTION(
                      list, list_info,
@@ -11525,7 +11525,7 @@ static bool setting_append_list(
                      &group_info,
                      &subgroup_info,
                      parent_group);
-            }
+            }*/
 
 
             CONFIG_BOOL(
@@ -12240,7 +12240,7 @@ static bool setting_append_list(
             else
 #endif
             {
-               CONFIG_BOOL(
+               /* CONFIG_BOOL(
                      list, list_info,
                      &settings->bools.video_smooth,
                      MENU_ENUM_LABEL_VIDEO_SMOOTH,
@@ -12255,7 +12255,7 @@ static bool setting_append_list(
                      general_read_handler,
                      SD_FLAG_NONE
                      );
-               MENU_SETTINGS_LIST_CURRENT_ADD_CMD(list, list_info, CMD_EVENT_REINIT);
+               MENU_SETTINGS_LIST_CURRENT_ADD_CMD(list, list_info, CMD_EVENT_REINIT); */
             }
 
 #ifdef HAVE_ODROIDGO2
@@ -12652,7 +12652,7 @@ static bool setting_append_list(
              * is shown in 'Settings > Video'. It therefore
              * requires an explicit guard to prevent display
              * on unsupported platforms */
-#if defined(HAVE_CG) || defined(HAVE_GLSL) || defined(HAVE_SLANG) || defined(HAVE_HLSL)
+/*#if defined(HAVE_CG) || defined(HAVE_GLSL) || defined(HAVE_SLANG) || defined(HAVE_HLSL)
             if (video_shader_any_supported())
             {
                CONFIG_UINT(
@@ -12670,7 +12670,7 @@ static bool setting_append_list(
                menu_settings_list_current_add_range(list, list_info, 0, 0, 1, true, false);
                SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_ADVANCED);
             }
-#endif
+#endif*/
 
             CONFIG_BOOL(
                   list, list_info,
@@ -12766,7 +12766,7 @@ static bool setting_append_list(
                   );
             SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
 
-            CONFIG_PATH(
+            /*CONFIG_PATH(
                   list, list_info,
                   settings->paths.path_softfilter_plugin,
                   sizeof(settings->paths.path_softfilter_plugin),
@@ -12782,7 +12782,7 @@ static bool setting_append_list(
                &setting_get_string_representation_video_filter;
             MENU_SETTINGS_LIST_CURRENT_ADD_VALUES(list, list_info, "filt");
             MENU_SETTINGS_LIST_CURRENT_ADD_CMD(list, list_info, CMD_EVENT_REINIT);
-            SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
+            SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);*/
 
             END_SUB_GROUP(list, list_info, parent_group);
             END_GROUP(list, list_info, parent_group);
@@ -13033,7 +13033,7 @@ static bool setting_append_list(
                SD_FLAG_NONE
                );
 
-#ifdef HAVE_AUDIOMIXER
+/* #ifdef HAVE_AUDIOMIXER
          CONFIG_BOOL(
                list, list_info,
                audio_get_bool_ptr(AUDIO_ACTION_MIXER_MUTE_ENABLE),
@@ -13049,7 +13049,7 @@ static bool setting_append_list(
                general_read_handler,
                SD_FLAG_LAKKA_ADVANCED
                );
-#endif
+#endif*/
          CONFIG_BOOL(
                list, list_info,
                &settings->bools.audio_fastforward_mute,
@@ -13081,7 +13081,7 @@ static bool setting_append_list(
          (*list)[list_info->index - 1].action_ok = &setting_action_ok_uint;
          menu_settings_list_current_add_range(list, list_info, -80, 12, 1.0, true, true);
 
-#ifdef HAVE_AUDIOMIXER
+/* #ifdef HAVE_AUDIOMIXER
          CONFIG_FLOAT(
                list, list_info,
                &settings->floats.audio_mixer_volume,
@@ -13097,7 +13097,7 @@ static bool setting_append_list(
          (*list)[list_info->index - 1].action_ok = &setting_action_ok_uint;
          menu_settings_list_current_add_range(list, list_info, -80, 12, 1.0, true, true);
          SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
-#endif
+#endif */
 
          END_SUB_GROUP(list, list_info, parent_group);
 
@@ -13233,7 +13233,7 @@ static bool setting_append_list(
                &subgroup_info,
                parent_group);
 
-#if !defined(RARCH_CONSOLE)
+/* #if !defined(RARCH_CONSOLE)
          CONFIG_STRING(
                list, list_info,
                settings->arrays.audio_device,
@@ -13251,7 +13251,7 @@ static bool setting_append_list(
          (*list)[list_info->index - 1].action_start  = setting_generic_action_start_default;
          (*list)[list_info->index - 1].action_left   = &setting_string_action_left_audio_device;
          (*list)[list_info->index - 1].action_right  = &setting_string_action_right_audio_device;
-#endif
+#endif*/
 
          CONFIG_UINT(
                list, list_info,
@@ -13268,7 +13268,7 @@ static bool setting_append_list(
          menu_settings_list_current_add_range(list, list_info, 1000, 192000, 100.0, true, true);
          SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_ADVANCED);
 
-         CONFIG_PATH(
+         /*CONFIG_PATH(
                list, list_info,
                settings->paths.path_audio_dsp_plugin,
                sizeof(settings->paths.path_audio_dsp_plugin),
@@ -13282,7 +13282,7 @@ static bool setting_append_list(
                general_read_handler);
          MENU_SETTINGS_LIST_CURRENT_ADD_VALUES(list, list_info, "dsp");
          MENU_SETTINGS_LIST_CURRENT_ADD_CMD(list, list_info, CMD_EVENT_DSP_FILTER_INIT);
-         SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
+         SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);*/
 
 #ifdef HAVE_WASAPI
          if (string_is_equal(settings->arrays.audio_driver, "wasapi"))
@@ -13452,6 +13452,7 @@ static bool setting_append_list(
             (*list)[list_info->index - 1].get_string_representation =
                &setting_get_string_representation_percentage;
             menu_settings_list_current_add_range(list, list_info, 0, 100, 5, true, true);
+
             CONFIG_UINT(
                   list, list_info,
                   &settings->uints.input_poll_type_behavior,
@@ -13485,7 +13486,7 @@ static bool setting_append_list(
             menu_settings_list_current_add_range(list, list_info, 1, 4, 1, true, true);
 #endif
 
-            CONFIG_UINT(
+            /* CONFIG_UINT(
                   list, list_info,
                   &settings->uints.input_touch_scale,
                   MENU_ENUM_LABEL_INPUT_TOUCH_SCALE,
@@ -13500,7 +13501,7 @@ static bool setting_append_list(
             (*list)[list_info->index - 1].get_string_representation =
                   &setting_get_string_representation_input_touch_scale;
             (*list)[list_info->index - 1].offset_by = 1;
-            menu_settings_list_current_add_range(list, list_info, 1, 4, 1, true, true);
+            menu_settings_list_current_add_range(list, list_info, 1, 4, 1, true, true); */
 
 #ifdef VITA
             CONFIG_BOOL(
@@ -13718,7 +13719,7 @@ static bool setting_append_list(
                   );
 #endif
 
-            CONFIG_BOOL(
+            /* CONFIG_BOOL(
                   list, list_info,
                   &settings->bools.input_sensors_enable,
                   MENU_ENUM_LABEL_INPUT_SENSORS_ENABLE,
@@ -13783,7 +13784,7 @@ static bool setting_append_list(
                (*list)[list_info->index - 1].action_ok = &setting_action_ok_uint;
                (*list)[list_info->index - 1].get_string_representation =
                   &setting_get_string_representation_uint_input_auto_game_focus;
-            menu_settings_list_current_add_range(list, list_info, 0, AUTO_GAME_FOCUS_LAST-1, 1, true, true);
+            menu_settings_list_current_add_range(list, list_info, 0, AUTO_GAME_FOCUS_LAST-1, 1, true, true); */
 #if 0
             CONFIG_BOOL(
                   list, list_info,
@@ -13905,14 +13906,6 @@ static bool setting_append_list(
             (*list)[list_info->index - 1].offset_by = 1;
             menu_settings_list_current_add_range(list, list_info, 1, 10, 1, true, true);
             SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_ADVANCED);
-
-            CONFIG_ACTION(
-                  list, list_info,
-                  MENU_ENUM_LABEL_INPUT_HAPTIC_FEEDBACK_SETTINGS,
-                  MENU_ENUM_LABEL_VALUE_INPUT_HAPTIC_FEEDBACK_SETTINGS,
-                  &group_info,
-                  &subgroup_info,
-                  parent_group);
 
             CONFIG_ACTION(
                   list, list_info,
@@ -14201,7 +14194,7 @@ static bool setting_append_list(
                SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
                (*list)[list_info->index - 1].ui_type   = ST_UI_TYPE_UINT_COMBOBOX;
 
-            CONFIG_DIR(
+            /* CONFIG_DIR(
                list, list_info,
                recording_st->output_dir,
                sizeof(recording_st->output_dir),
@@ -14214,7 +14207,7 @@ static bool setting_append_list(
                parent_group,
                general_write_handler,
                general_read_handler);
-               (*list)[list_info->index - 1].action_start = directory_action_start_generic;
+               (*list)[list_info->index - 1].action_start = directory_action_start_generic; */
 
             END_SUB_GROUP(list, list_info, parent_group);
 
@@ -14587,7 +14580,7 @@ static bool setting_append_list(
          (*list)[list_info->index - 1].action_right  = &setting_bool_action_right_with_refresh;
          MENU_SETTINGS_LIST_CURRENT_ADD_CMD(list, list_info, CMD_EVENT_REINIT);
 
-         CONFIG_PATH(
+         /* CONFIG_PATH(
                list, list_info,
                settings->paths.path_font,
                sizeof(settings->paths.path_font),
@@ -14601,7 +14594,7 @@ static bool setting_append_list(
                general_read_handler);
          MENU_SETTINGS_LIST_CURRENT_ADD_VALUES(list, list_info, "ttf");
          MENU_SETTINGS_LIST_CURRENT_ADD_CMD(list, list_info, CMD_EVENT_REINIT);
-         (*list)[list_info->index - 1].ui_type   = ST_UI_TYPE_FONT_SELECTOR;
+         (*list)[list_info->index - 1].ui_type   = ST_UI_TYPE_FONT_SELECTOR; */
 
          CONFIG_FLOAT(
                list, list_info,
@@ -15761,7 +15754,7 @@ static bool setting_append_list(
                &setting_get_string_representation_uint_quit_on_close_content;
          menu_settings_list_current_add_range(list, list_info, 0, QUIT_ON_CLOSE_CONTENT_LAST-1, 1, true, true);
 
-         CONFIG_UINT(
+         /*CONFIG_UINT(
                list, list_info,
                &settings->uints.menu_screensaver_timeout,
                MENU_ENUM_LABEL_MENU_SCREENSAVER_TIMEOUT,
@@ -15847,7 +15840,7 @@ static bool setting_append_list(
                general_write_handler,
                general_read_handler,
                SD_FLAG_ADVANCED
-               );
+               );*/
 
          if (string_is_equal(settings->arrays.menu_driver, "rgui"))
          {
@@ -16307,7 +16300,7 @@ static bool setting_append_list(
                general_read_handler,
                SD_FLAG_NONE);
 
-         if (string_is_equal(settings->arrays.menu_driver, "xmb") || string_is_equal(settings->arrays.menu_driver, "ozone"))
+         /*if (string_is_equal(settings->arrays.menu_driver, "xmb") || string_is_equal(settings->arrays.menu_driver, "ozone"))
          {
             CONFIG_BOOL(
                   list, list_info,
@@ -16342,7 +16335,7 @@ static bool setting_append_list(
             SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_ALLOW_INPUT);
             (*list)[list_info->index - 1].ui_type       = ST_UI_TYPE_PASSWORD_LINE_EDIT;
             (*list)[list_info->index - 1].action_start  = setting_generic_action_start_default;
-         }
+         }*/
 
 #ifdef HAVE_THREADS
          CONFIG_BOOL(
@@ -16932,7 +16925,7 @@ static bool setting_append_list(
                   general_read_handler,
                   SD_FLAG_NONE);
 
-#ifdef HAVE_IMAGEVIEWER
+/*#ifdef HAVE_IMAGEVIEWER
             CONFIG_BOOL(
                   list, list_info,
                   &settings->bools.menu_content_show_images,
@@ -16979,7 +16972,7 @@ static bool setting_append_list(
                   general_write_handler,
                   general_read_handler,
                   SD_FLAG_NONE);
-#endif
+#endif*/
 
             CONFIG_BOOL(
                   list, list_info,
@@ -17070,22 +17063,22 @@ static bool setting_append_list(
                   general_read_handler,
                   SD_FLAG_NONE);
 
-#if defined(HAVE_LIBRETRODB)
-            CONFIG_BOOL(
-                  list, list_info,
-                  &settings->bools.menu_content_show_explore,
-                  MENU_ENUM_LABEL_CONTENT_SHOW_EXPLORE,
-                  MENU_ENUM_LABEL_VALUE_CONTENT_SHOW_EXPLORE,
-                  DEFAULT_MENU_CONTENT_SHOW_EXPLORE,
-                  MENU_ENUM_LABEL_VALUE_OFF,
-                  MENU_ENUM_LABEL_VALUE_ON,
-                  &group_info,
-                  &subgroup_info,
-                  parent_group,
-                  general_write_handler,
-                  general_read_handler,
-                  SD_FLAG_NONE);
-#endif
+//#if defined(HAVE_LIBRETRODB)
+//            CONFIG_BOOL(
+//                  list, list_info,
+//                  &settings->bools.menu_content_show_explore,
+//                  MENU_ENUM_LABEL_CONTENT_SHOW_EXPLORE,
+//                  MENU_ENUM_LABEL_VALUE_CONTENT_SHOW_EXPLORE,
+//                  DEFAULT_MENU_CONTENT_SHOW_EXPLORE,
+//                  MENU_ENUM_LABEL_VALUE_OFF,
+//                  MENU_ENUM_LABEL_VALUE_ON,
+//                  &group_info,
+//                  &subgroup_info,
+//                  parent_group,
+//                  general_write_handler,
+//                  general_read_handler,
+//                  SD_FLAG_NONE);
+//#endif
          CONFIG_UINT(
                list, list_info,
                &settings->uints.menu_content_show_contentless_cores,
@@ -17394,7 +17387,7 @@ static bool setting_append_list(
          }
 #endif
 
-         CONFIG_BOOL(
+         /*CONFIG_BOOL(
                list, list_info,
                &settings->bools.menu_show_start_screen,
                MENU_ENUM_LABEL_RGUI_SHOW_START_SCREEN,
@@ -17407,7 +17400,7 @@ static bool setting_append_list(
                parent_group,
                general_write_handler,
                general_read_handler,
-               SD_FLAG_ADVANCED);
+               SD_FLAG_ADVANCED);*/
 
          if (string_is_equal(settings->arrays.menu_driver, "rgui"))
          {
@@ -17638,7 +17631,7 @@ static bool setting_append_list(
          menu_settings_list_current_add_range(list, list_info, 0, MENU_TIMEDATE_DATE_SEPARATOR_LAST - 1, 1, true, true);
          (*list)[list_info->index - 1].ui_type   = ST_UI_TYPE_UINT_COMBOBOX;
 
-         CONFIG_BOOL(
+         /*CONFIG_BOOL(
                list, list_info,
                &settings->bools.menu_battery_level_enable,
                MENU_ENUM_LABEL_BATTERY_LEVEL_ENABLE,
@@ -17651,7 +17644,7 @@ static bool setting_append_list(
                parent_group,
                general_write_handler,
                general_read_handler,
-               SD_FLAG_ADVANCED);
+               SD_FLAG_ADVANCED);*/
 
          CONFIG_BOOL(
                list, list_info,
@@ -17737,7 +17730,7 @@ static bool setting_append_list(
 
          START_SUB_GROUP(list, list_info, "State", &group_info, &subgroup_info, parent_group);
 
-         CONFIG_BOOL(
+         /*CONFIG_BOOL(
                list, list_info,
                &settings->bools.multimedia_builtin_mediaplayer_enable,
                MENU_ENUM_LABEL_USE_BUILTIN_PLAYER,
@@ -17750,9 +17743,9 @@ static bool setting_append_list(
                parent_group,
                general_write_handler,
                general_read_handler,
-               SD_FLAG_NONE);
+               SD_FLAG_NONE);*/
 
-#ifdef HAVE_IMAGEVIEWER
+/* #ifdef HAVE_IMAGEVIEWER
          CONFIG_BOOL(
                list, list_info,
                &settings->bools.multimedia_builtin_imageviewer_enable,
@@ -17767,7 +17760,7 @@ static bool setting_append_list(
                general_write_handler,
                general_read_handler,
                SD_FLAG_NONE);
-#endif
+#endif*/
 
          CONFIG_BOOL(
                list, list_info,
@@ -18051,7 +18044,7 @@ static bool setting_append_list(
 
          START_SUB_GROUP(list, list_info, "State", &group_info, &subgroup_info, parent_group);
 
-         CONFIG_BOOL(
+         /*CONFIG_BOOL(
                list, list_info,
                &settings->bools.pause_nonactive,
                MENU_ENUM_LABEL_PAUSE_NONACTIVE,
@@ -18065,9 +18058,9 @@ static bool setting_append_list(
                general_write_handler,
                general_read_handler,
                SD_FLAG_NONE);
-         SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
+         SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);*/
 
-#if !defined(RARCH_MOBILE)
+/* #if !defined(RARCH_MOBILE)
          CONFIG_BOOL(
                list, list_info,
                &settings->bools.video_disable_composition,
@@ -18084,7 +18077,7 @@ static bool setting_append_list(
                SD_FLAG_CMD_APPLY_AUTO);
          MENU_SETTINGS_LIST_CURRENT_ADD_CMD(list, list_info, CMD_EVENT_REINIT);
          SETTINGS_DATA_LIST_CURRENT_ADD_FLAGS(list, list_info, SD_FLAG_LAKKA_ADVANCED);
-#endif
+#endif */
 
 #if defined(_3DS)
          {
@@ -18181,7 +18174,7 @@ static bool setting_append_list(
                general_write_handler,
                general_read_handler,
                SD_FLAG_NONE);
-#endif
+#endif 
          CONFIG_BOOL(
                list, list_info,
                &settings->bools.menu_show_legacy_thumbnail_updater,
@@ -18395,7 +18388,7 @@ static bool setting_append_list(
                general_read_handler,
                SD_FLAG_NONE);
 
-         CONFIG_BOOL(
+         /* CONFIG_BOOL(
                list, list_info,
                &settings->bools.settings_show_onscreen_display,
                MENU_ENUM_LABEL_SETTINGS_SHOW_ONSCREEN_DISPLAY,
@@ -18408,7 +18401,7 @@ static bool setting_append_list(
                parent_group,
                general_write_handler,
                general_read_handler,
-               SD_FLAG_NONE);
+               SD_FLAG_NONE); */
 
          CONFIG_BOOL(
                list, list_info,
@@ -18440,7 +18433,7 @@ static bool setting_append_list(
                general_read_handler,
                SD_FLAG_NONE);
 
-         CONFIG_BOOL(
+         /*CONFIG_BOOL(
                list, list_info,
                &settings->bools.settings_show_accessibility,
                MENU_ENUM_LABEL_SETTINGS_SHOW_ACCESSIBILITY,
@@ -18468,7 +18461,7 @@ static bool setting_append_list(
                parent_group,
                general_write_handler,
                general_read_handler,
-               SD_FLAG_NONE);
+               SD_FLAG_NONE);*/
 
          CONFIG_BOOL(
                list, list_info,
@@ -20447,7 +20440,7 @@ static bool setting_append_list(
                parent_group);
 #endif
 
-#ifdef HAVE_NETWORKING
+/* #ifdef HAVE_NETWORKING
          CONFIG_ACTION(
                list, list_info,
                MENU_ENUM_LABEL_ACCOUNTS_YOUTUBE,
@@ -20471,7 +20464,7 @@ static bool setting_append_list(
                &group_info,
                &subgroup_info,
                parent_group);         
-#endif
+#endif */
 
          END_SUB_GROUP(list, list_info, parent_group);
          END_GROUP(list, list_info, parent_group);
@@ -20723,7 +20716,7 @@ static bool setting_append_list(
                general_read_handler);
          (*list)[list_info->index - 1].action_start = directory_action_start_generic;
 
-         CONFIG_DIR(
+         /* CONFIG_DIR(
                list, list_info,
                settings->paths.directory_libretro,
                sizeof(settings->paths.directory_libretro),
@@ -20737,7 +20730,7 @@ static bool setting_append_list(
                general_write_handler,
                general_read_handler);
          MENU_SETTINGS_LIST_CURRENT_ADD_CMD(list, list_info, CMD_EVENT_CORE_INFO_INIT);
-         (*list)[list_info->index - 1].action_start = directory_action_start_generic;
+         (*list)[list_info->index - 1].action_start = directory_action_start_generic; */
 
          CONFIG_DIR(
                list, list_info,
@@ -20802,7 +20795,7 @@ static bool setting_append_list(
                general_read_handler);
          (*list)[list_info->index - 1].action_start = directory_action_start_generic;
 
-         CONFIG_DIR(
+         /* CONFIG_DIR(
                list, list_info,
                settings->paths.directory_video_filter,
                sizeof(settings->paths.directory_video_filter),
@@ -20830,7 +20823,7 @@ static bool setting_append_list(
                parent_group,
                general_write_handler,
                general_read_handler);
-         (*list)[list_info->index - 1].action_start = directory_action_start_generic;
+         (*list)[list_info->index - 1].action_start = directory_action_start_generic; */
 
 #if defined(HAVE_CG) || defined(HAVE_GLSL) || defined(HAVE_SLANG) || defined(HAVE_HLSL)
          CONFIG_DIR(
@@ -20849,7 +20842,8 @@ static bool setting_append_list(
          (*list)[list_info->index - 1].action_start = directory_action_start_generic;
 #endif
 
-         if (string_is_not_equal(settings->arrays.record_driver, "null"))
+         
+         /* if (string_is_not_equal(settings->arrays.record_driver, "null"))
          {
             CONFIG_DIR(
                   list, list_info,
@@ -20880,7 +20874,7 @@ static bool setting_append_list(
                   general_write_handler,
                   general_read_handler);
             (*list)[list_info->index - 1].action_start = directory_action_start_generic;
-         }
+         } */
 #ifdef HAVE_OVERLAY
          CONFIG_DIR(
                list, list_info,
@@ -21005,7 +20999,7 @@ static bool setting_append_list(
                general_read_handler);
          (*list)[list_info->index - 1].action_start = directory_action_start_generic;
 
-         CONFIG_DIR(
+         /* CONFIG_DIR(
                list, list_info,
                settings->paths.directory_content_image_history,
                sizeof(settings->paths.directory_content_image_history),
@@ -21048,7 +21042,7 @@ static bool setting_append_list(
                parent_group,
                general_write_handler,
                general_read_handler);
-         (*list)[list_info->index - 1].action_start = directory_action_start_generic;
+         (*list)[list_info->index - 1].action_start = directory_action_start_generic; */
 
          CONFIG_DIR(
                list, list_info,
@@ -21095,7 +21089,7 @@ static bool setting_append_list(
                general_read_handler);
          (*list)[list_info->index - 1].action_start = directory_action_start_generic;
 
-         CONFIG_DIR(
+         /* CONFIG_DIR(
                list, list_info,
                settings->paths.directory_cache,
                sizeof(settings->paths.directory_cache),
@@ -21108,7 +21102,7 @@ static bool setting_append_list(
                parent_group,
                general_write_handler,
                general_read_handler);
-         (*list)[list_info->index - 1].action_start = directory_action_start_generic;
+         (*list)[list_info->index - 1].action_start = directory_action_start_generic; */
 
          CONFIG_DIR(
                list, list_info,

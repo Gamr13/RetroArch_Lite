@@ -6147,27 +6147,6 @@ unsigned menu_displaylist_build_list(
             }
          }
          break;
-      case DISPLAYLIST_INPUT_HAPTIC_FEEDBACK_SETTINGS_LIST:
-         {
-            const char *input_driver_id  = settings->arrays.input_driver;
-
-            if (string_is_equal(input_driver_id, "android"))
-            {
-               if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                        MENU_ENUM_LABEL_VIBRATE_ON_KEYPRESS,
-                        PARSE_ONLY_BOOL, false) == 0)
-                  count++;
-               if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                        MENU_ENUM_LABEL_ENABLE_DEVICE_VIBRATION,
-                        PARSE_ONLY_BOOL, false) == 0)
-                  count++;
-            }
-            if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                     MENU_ENUM_LABEL_INPUT_RUMBLE_GAIN,
-                     PARSE_ONLY_UINT, false) == 0)
-                  count++;
-         }
-         break;
       case DISPLAYLIST_INPUT_HOTKEY_BINDS_LIST:
          {
             bool hotkey_enable_found   = false;
@@ -6529,10 +6508,10 @@ unsigned menu_displaylist_build_list(
                   MENU_ENUM_LABEL_AUDIO_ENABLE,
                   PARSE_ONLY_BOOL, false) == 0)
             count++;
-         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
+         /* if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
                   MENU_ENUM_LABEL_AUDIO_DRIVER,
                   PARSE_ONLY_STRING_OPTIONS, false) == 0)
-            count++;
+            count++; */
          if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
                   MENU_ENUM_LABEL_AUDIO_DEVICE,
                   PARSE_ONLY_STRING, false) == 0)
@@ -6987,6 +6966,10 @@ unsigned menu_displaylist_build_list(
                   PARSE_ONLY_UINT, false) == 0)
             count++;
          if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
+            MENU_ENUM_LABEL_INPUT_RUMBLE_GAIN,
+            PARSE_ONLY_UINT, false) == 0)
+            count++;
+         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
                   MENU_ENUM_LABEL_INPUT_BIND_MODE,
                   PARSE_ONLY_UINT, false) == 0)
             count++;
@@ -7013,10 +6996,6 @@ unsigned menu_displaylist_build_list(
          if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
                   MENU_ENUM_LABEL_INPUT_AUTO_GAME_FOCUS,
                   PARSE_ONLY_UINT, false) == 0)
-            count++;
-         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                  MENU_ENUM_LABEL_INPUT_HAPTIC_FEEDBACK_SETTINGS,
-                  PARSE_ACTION, false) == 0)
             count++;
          if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
                   MENU_ENUM_LABEL_INPUT_MENU_SETTINGS,
@@ -8273,6 +8252,8 @@ unsigned menu_displaylist_build_list(
             menu_displaylist_build_info_selective_t build_list[] = {
                {MENU_ENUM_LABEL_MENU_VIEWS_SETTINGS,                                   PARSE_ACTION,      true},
                {MENU_ENUM_LABEL_MENU_SETTINGS,                                         PARSE_ACTION,      true},
+               {MENU_ENUM_LABEL_ONSCREEN_NOTIFICATIONS_SETTINGS,                       PARSE_ACTION,      true},
+               {MENU_ENUM_LABEL_ONSCREEN_OVERLAY_SETTINGS,                             PARSE_ACTION,      true},
                {MENU_ENUM_LABEL_MENU_DRIVER,                                           PARSE_ONLY_STRING_OPTIONS, true},
                {MENU_ENUM_LABEL_SHOW_ADVANCED_SETTINGS,                                PARSE_ONLY_BOOL,   true},
                {MENU_ENUM_LABEL_MENU_ENABLE_KIOSK_MODE,                                PARSE_ONLY_BOOL,   true},
@@ -9034,6 +9015,210 @@ unsigned menu_displaylist_build_list(
          }
          break;
 #endif
+      case DISPLAYLIST_ONSCREEN_NOTIFICATIONS_SETTINGS_LIST:
+      {
+         bool video_font_enable = settings->bools.video_font_enable;
+         bool video_msg_bgcolor_enable = settings->bools.video_msg_bgcolor_enable;
+         bool video_fps_show = settings->bools.video_fps_show;
+         bool video_memory_show = settings->bools.video_memory_show;
+#ifdef HAVE_GFX_WIDGETS
+         bool widgets_supported = video_driver_has_widgets();
+         bool widgets_active = gfx_widgets_ready();
+         bool menu_widget_scale_auto = settings->bools.menu_widget_scale_auto;
+         bool notifications_active = video_font_enable || widgets_active;
+#else
+         bool widgets_active = false;
+#endif
+         menu_displaylist_build_info_selective_t build_list[] = {
+            {MENU_ENUM_LABEL_ONSCREEN_NOTIFICATIONS_VIEWS_SETTINGS, PARSE_ACTION,      true  },
+            {MENU_ENUM_LABEL_FPS_SHOW,                                PARSE_ONLY_BOOL,  true },
+            {MENU_ENUM_LABEL_FPS_UPDATE_INTERVAL,                     PARSE_ONLY_UINT,  false },
+            {MENU_ENUM_LABEL_FRAMECOUNT_SHOW,                         PARSE_ONLY_BOOL,  true },
+            {MENU_ENUM_LABEL_STATISTICS_SHOW,                         PARSE_ONLY_BOOL,  true },
+            {MENU_ENUM_LABEL_MEMORY_SHOW,                             PARSE_ONLY_BOOL,  true },
+            {MENU_ENUM_LABEL_MEMORY_UPDATE_INTERVAL,                  PARSE_ONLY_UINT,  false },
+            {MENU_ENUM_LABEL_VIDEO_FONT_ENABLE,                     PARSE_ONLY_BOOL,   true  },
+            {MENU_ENUM_LABEL_MENU_WIDGETS_ENABLE,                   PARSE_ONLY_BOOL,   false },
+            {MENU_ENUM_LABEL_MENU_WIDGET_SCALE_AUTO,                PARSE_ONLY_BOOL,   false },
+            {MENU_ENUM_LABEL_MENU_WIDGET_SCALE_FACTOR,              PARSE_ONLY_FLOAT,  false },
+
+#if !(defined(RARCH_CONSOLE) || defined(RARCH_MOBILE))
+               {MENU_ENUM_LABEL_MENU_WIDGET_SCALE_FACTOR_WINDOWED,     PARSE_ONLY_FLOAT,  false },
+#endif
+               {MENU_ENUM_LABEL_VIDEO_FONT_PATH,                       PARSE_ONLY_PATH,   false },
+               {MENU_ENUM_LABEL_VIDEO_FONT_SIZE,                       PARSE_ONLY_FLOAT,  false },
+               {MENU_ENUM_LABEL_VIDEO_MESSAGE_POS_X,                   PARSE_ONLY_FLOAT,  false },
+               {MENU_ENUM_LABEL_VIDEO_MESSAGE_POS_Y,                   PARSE_ONLY_FLOAT,  false },
+               {MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_RED,               PARSE_ONLY_FLOAT,  false },
+               {MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_GREEN,             PARSE_ONLY_FLOAT,  false },
+               {MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_BLUE,              PARSE_ONLY_FLOAT,  false },
+               {MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_ENABLE,          PARSE_ONLY_BOOL,   false },
+               {MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_RED,             PARSE_ONLY_UINT,   false },
+               {MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_GREEN,           PARSE_ONLY_UINT,   false },
+               {MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_BLUE,            PARSE_ONLY_UINT,   false },
+               {MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_OPACITY,         PARSE_ONLY_FLOAT,  false },
+               };
+
+         for (i = 0; i < ARRAY_SIZE(build_list); i++)
+         {
+            switch (build_list[i].enum_idx)
+            {
+            case MENU_ENUM_LABEL_FPS_UPDATE_INTERVAL:
+               if (notifications_active && video_fps_show)
+                  build_list[i].checked = true;
+               break;
+            case MENU_ENUM_LABEL_MEMORY_UPDATE_INTERVAL:
+               if (notifications_active && video_memory_show)
+                  build_list[i].checked = true;
+               break;
+            case MENU_ENUM_LABEL_STATISTICS_SHOW:
+               if (notifications_active && video_font_enable)
+                  build_list[i].checked = true;
+               break;
+#ifdef HAVE_GFX_WIDGETS
+            case MENU_ENUM_LABEL_MENU_WIDGETS_ENABLE:
+               if (video_font_enable && widgets_supported)
+                  build_list[i].checked = true;
+               break;
+            case MENU_ENUM_LABEL_MENU_WIDGET_SCALE_AUTO:
+               if (widgets_active)
+                  build_list[i].checked = true;
+               break;
+            case MENU_ENUM_LABEL_MENU_WIDGET_SCALE_FACTOR:
+               if (widgets_active && !menu_widget_scale_auto)
+                  build_list[i].checked = true;
+               break;
+#if !(defined(RARCH_CONSOLE) || defined(RARCH_MOBILE))
+            case MENU_ENUM_LABEL_MENU_WIDGET_SCALE_FACTOR_WINDOWED:
+               if (widgets_active && !menu_widget_scale_auto)
+                  build_list[i].checked = true;
+               break;
+#endif
+#endif
+            case MENU_ENUM_LABEL_VIDEO_FONT_PATH:
+            case MENU_ENUM_LABEL_VIDEO_FONT_SIZE:
+               if (video_font_enable || widgets_active)
+                  build_list[i].checked = true;
+               break;
+            case MENU_ENUM_LABEL_VIDEO_MESSAGE_POS_X:
+            case MENU_ENUM_LABEL_VIDEO_MESSAGE_POS_Y:
+            case MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_RED:
+            case MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_GREEN:
+            case MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_BLUE:
+            case MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_ENABLE:
+               if (!widgets_active && video_font_enable)
+                  build_list[i].checked = true;
+               break;
+            case MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_RED:
+            case MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_GREEN:
+            case MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_BLUE:
+            case MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_OPACITY:
+               if (!widgets_active &&
+                  video_font_enable &&
+                  video_msg_bgcolor_enable)
+                  build_list[i].checked = true;
+               break;
+            default:
+               break;
+            }
+         }
+
+         for (i = 0; i < ARRAY_SIZE(build_list); i++)
+         {
+            if (!build_list[i].checked && !include_everything)
+               continue;
+
+            if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
+               build_list[i].enum_idx, build_list[i].parse_type,
+               false) == 0)
+               count++;
+         }
+            }
+      break;
+      case DISPLAYLIST_ONSCREEN_NOTIFICATIONS_VIEWS_SETTINGS_LIST:
+      {
+         bool video_font_enable = settings->bools.video_font_enable;
+#ifdef HAVE_GFX_WIDGETS
+         bool widgets_active = gfx_widgets_ready();
+         bool notifications_active = video_font_enable || widgets_active;
+#ifdef HAVE_SCREENSHOTS
+         bool notification_show_screenshot = settings->bools.notification_show_screenshot;
+#endif
+#else
+         bool notifications_active = video_font_enable;
+#endif
+         menu_displaylist_build_info_selective_t build_list[] = {
+               {MENU_ENUM_LABEL_MENU_SHOW_LOAD_CONTENT_ANIMATION,        PARSE_ONLY_BOOL,  false },
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_AUTOCONFIG,            PARSE_ONLY_BOOL,  false },
+#ifdef HAVE_CHEATS
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_CHEATS_APPLIED,        PARSE_ONLY_BOOL,  false },
+#endif
+#ifdef HAVE_PATCH
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_PATCH_APPLIED,         PARSE_ONLY_BOOL,  true },
+#endif
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_REMAP_LOAD,            PARSE_ONLY_BOOL,  false },
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_CONFIG_OVERRIDE_LOAD,  PARSE_ONLY_BOOL,  false },
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_SET_INITIAL_DISK,      PARSE_ONLY_BOOL,  false },
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_FAST_FORWARD,          PARSE_ONLY_BOOL,  false },
+#ifdef HAVE_SCREENSHOTS
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_SCREENSHOT,            PARSE_ONLY_BOOL,  false },
+#ifdef HAVE_GFX_WIDGETS
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_SCREENSHOT_DURATION,   PARSE_ONLY_UINT,  false },
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_SCREENSHOT_FLASH,      PARSE_ONLY_UINT,  false },
+#endif
+#endif
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_REFRESH_RATE,          PARSE_ONLY_BOOL,  false },
+#ifdef HAVE_NETWORKING
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_NETPLAY_EXTRA,         PARSE_ONLY_BOOL,  false },
+#endif
+               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_WHEN_MENU_IS_ALIVE,    PARSE_ONLY_BOOL,  false },
+         };
+
+         for (i = 0; i < ARRAY_SIZE(build_list); i++)
+         {
+            switch (build_list[i].enum_idx)
+            {
+#ifdef HAVE_GFX_WIDGETS
+#ifdef HAVE_NETWORKING
+            case MENU_ENUM_LABEL_NETPLAY_PING_SHOW:
+               if (widgets_active)
+                  build_list[i].checked = true;
+               break;
+#endif
+            case MENU_ENUM_LABEL_MENU_SHOW_LOAD_CONTENT_ANIMATION:
+               if (widgets_active)
+                  build_list[i].checked = true;
+               break;
+#ifdef HAVE_SCREENSHOTS
+            case MENU_ENUM_LABEL_NOTIFICATION_SHOW_SCREENSHOT_DURATION:
+               if (widgets_active && notification_show_screenshot)
+                  build_list[i].checked = true;
+               break;
+            case MENU_ENUM_LABEL_NOTIFICATION_SHOW_SCREENSHOT_FLASH:
+               if (widgets_active && notification_show_screenshot)
+                  build_list[i].checked = true;
+               break;
+#endif
+#endif
+            default:
+               if (notifications_active)
+                  build_list[i].checked = true;
+               break;
+            }
+         }
+
+         for (i = 0; i < ARRAY_SIZE(build_list); i++)
+         {
+            if (!build_list[i].checked && !include_everything)
+               continue;
+
+            if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
+               build_list[i].enum_idx, build_list[i].parse_type,
+               false) == 0)
+               count++;
+         }
+      }
+      break;
       case DISPLAYLIST_LATENCY_SETTINGS_LIST:
          {
             bool video_hard_sync          = settings->bools.video_hard_sync;
@@ -9145,211 +9330,7 @@ unsigned menu_displaylist_build_list(
                count++;
          }
          break;
-      case DISPLAYLIST_ONSCREEN_NOTIFICATIONS_SETTINGS_LIST:
-         {
-            bool video_font_enable        = settings->bools.video_font_enable;
-            bool video_msg_bgcolor_enable = settings->bools.video_msg_bgcolor_enable;
-#ifdef HAVE_GFX_WIDGETS
-            bool widgets_supported        = video_driver_has_widgets();
-            bool widgets_active           = gfx_widgets_ready();
-            bool menu_widget_scale_auto   = settings->bools.menu_widget_scale_auto;
-#else
-            bool widgets_active           = false;
-#endif
-            menu_displaylist_build_info_selective_t build_list[] = {
-               {MENU_ENUM_LABEL_ONSCREEN_NOTIFICATIONS_VIEWS_SETTINGS, PARSE_ACTION,      true  },
-               {MENU_ENUM_LABEL_VIDEO_FONT_ENABLE,                     PARSE_ONLY_BOOL,   true  },
-               {MENU_ENUM_LABEL_MENU_WIDGETS_ENABLE,                   PARSE_ONLY_BOOL,   false },
-               {MENU_ENUM_LABEL_MENU_WIDGET_SCALE_AUTO,                PARSE_ONLY_BOOL,   false },
-               {MENU_ENUM_LABEL_MENU_WIDGET_SCALE_FACTOR,              PARSE_ONLY_FLOAT,  false },
-#if !(defined(RARCH_CONSOLE) || defined(RARCH_MOBILE))
-               {MENU_ENUM_LABEL_MENU_WIDGET_SCALE_FACTOR_WINDOWED,     PARSE_ONLY_FLOAT,  false },
-#endif
-               {MENU_ENUM_LABEL_VIDEO_FONT_PATH,                       PARSE_ONLY_PATH,   false },
-               {MENU_ENUM_LABEL_VIDEO_FONT_SIZE,                       PARSE_ONLY_FLOAT,  false },
-               {MENU_ENUM_LABEL_VIDEO_MESSAGE_POS_X,                   PARSE_ONLY_FLOAT,  false },
-               {MENU_ENUM_LABEL_VIDEO_MESSAGE_POS_Y,                   PARSE_ONLY_FLOAT,  false },
-               {MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_RED,               PARSE_ONLY_FLOAT,  false },
-               {MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_GREEN,             PARSE_ONLY_FLOAT,  false },
-               {MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_BLUE,              PARSE_ONLY_FLOAT,  false },
-               {MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_ENABLE,          PARSE_ONLY_BOOL,   false },
-               {MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_RED,             PARSE_ONLY_UINT,   false },
-               {MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_GREEN,           PARSE_ONLY_UINT,   false },
-               {MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_BLUE,            PARSE_ONLY_UINT,   false },
-               {MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_OPACITY,         PARSE_ONLY_FLOAT,  false },
-            };
-
-            for (i = 0; i < ARRAY_SIZE(build_list); i++)
-            {
-               switch (build_list[i].enum_idx)
-               {
-#ifdef HAVE_GFX_WIDGETS
-                  case MENU_ENUM_LABEL_MENU_WIDGETS_ENABLE:
-                     if (video_font_enable && widgets_supported)
-                        build_list[i].checked = true;
-                     break;
-                  case MENU_ENUM_LABEL_MENU_WIDGET_SCALE_AUTO:
-                     if (widgets_active)
-                        build_list[i].checked = true;
-                     break;
-                  case MENU_ENUM_LABEL_MENU_WIDGET_SCALE_FACTOR:
-                     if (widgets_active && !menu_widget_scale_auto)
-                        build_list[i].checked = true;
-                     break;
-#if !(defined(RARCH_CONSOLE) || defined(RARCH_MOBILE))
-                  case MENU_ENUM_LABEL_MENU_WIDGET_SCALE_FACTOR_WINDOWED:
-                     if (widgets_active && !menu_widget_scale_auto)
-                        build_list[i].checked = true;
-                     break;
-#endif
-#endif
-                  case MENU_ENUM_LABEL_VIDEO_FONT_PATH:
-                  case MENU_ENUM_LABEL_VIDEO_FONT_SIZE:
-                     if (video_font_enable || widgets_active)
-                        build_list[i].checked = true;
-                     break;
-                  case MENU_ENUM_LABEL_VIDEO_MESSAGE_POS_X:
-                  case MENU_ENUM_LABEL_VIDEO_MESSAGE_POS_Y:
-                  case MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_RED:
-                  case MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_GREEN:
-                  case MENU_ENUM_LABEL_VIDEO_MESSAGE_COLOR_BLUE:
-                  case MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_ENABLE:
-                     if (!widgets_active && video_font_enable)
-                        build_list[i].checked = true;
-                     break;
-                  case MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_RED:
-                  case MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_GREEN:
-                  case MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_BLUE:
-                  case MENU_ENUM_LABEL_VIDEO_MESSAGE_BGCOLOR_OPACITY:
-                     if (!widgets_active &&
-                         video_font_enable &&
-                         video_msg_bgcolor_enable)
-                        build_list[i].checked = true;
-                     break;
-                  default:
-                     break;
-               }
-            }
-
-            for (i = 0; i < ARRAY_SIZE(build_list); i++)
-            {
-               if (!build_list[i].checked && !include_everything)
-                  continue;
-
-               if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                        build_list[i].enum_idx,  build_list[i].parse_type,
-                        false) == 0)
-                  count++;
-            }
-         }
-         break;
-      case DISPLAYLIST_ONSCREEN_NOTIFICATIONS_VIEWS_SETTINGS_LIST:
-         {
-            bool video_font_enable            = settings->bools.video_font_enable;
-            bool video_fps_show               = settings->bools.video_fps_show;
-            bool video_memory_show            = settings->bools.video_memory_show;
-#ifdef HAVE_GFX_WIDGETS
-            bool widgets_active               = gfx_widgets_ready();
-            bool notifications_active         = video_font_enable || widgets_active;
-#ifdef HAVE_SCREENSHOTS
-            bool notification_show_screenshot = settings->bools.notification_show_screenshot;
-#endif
-#else
-            bool notifications_active         = video_font_enable;
-#endif
-            menu_displaylist_build_info_selective_t build_list[] = {
-               {MENU_ENUM_LABEL_FPS_SHOW,                                PARSE_ONLY_BOOL,  false },
-               {MENU_ENUM_LABEL_FPS_UPDATE_INTERVAL,                     PARSE_ONLY_UINT,  false },
-               {MENU_ENUM_LABEL_FRAMECOUNT_SHOW,                         PARSE_ONLY_BOOL,  false },
-               {MENU_ENUM_LABEL_STATISTICS_SHOW,                         PARSE_ONLY_BOOL,  false },
-               {MENU_ENUM_LABEL_MEMORY_SHOW,                             PARSE_ONLY_BOOL,  false },
-               {MENU_ENUM_LABEL_MEMORY_UPDATE_INTERVAL,                  PARSE_ONLY_UINT,  false },
-#if defined(HAVE_NETWORKING) && defined(HAVE_GFX_WIDGETS)
-               {MENU_ENUM_LABEL_NETPLAY_PING_SHOW,                       PARSE_ONLY_BOOL,  false },
-#endif
-               {MENU_ENUM_LABEL_MENU_SHOW_LOAD_CONTENT_ANIMATION,        PARSE_ONLY_BOOL,  false },
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_AUTOCONFIG,            PARSE_ONLY_BOOL,  false },
-#ifdef HAVE_CHEATS
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_CHEATS_APPLIED,        PARSE_ONLY_BOOL,  false },
-#endif
-#ifdef HAVE_PATCH
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_PATCH_APPLIED,         PARSE_ONLY_BOOL,  true },
-#endif
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_REMAP_LOAD,            PARSE_ONLY_BOOL,  false },
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_CONFIG_OVERRIDE_LOAD,  PARSE_ONLY_BOOL,  false },
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_SET_INITIAL_DISK,      PARSE_ONLY_BOOL,  false },
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_FAST_FORWARD,          PARSE_ONLY_BOOL,  false },
-#ifdef HAVE_SCREENSHOTS
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_SCREENSHOT,            PARSE_ONLY_BOOL,  false },
-#ifdef HAVE_GFX_WIDGETS
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_SCREENSHOT_DURATION,   PARSE_ONLY_UINT,  false },
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_SCREENSHOT_FLASH,      PARSE_ONLY_UINT,  false },
-#endif
-#endif
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_REFRESH_RATE,          PARSE_ONLY_BOOL,  false },
-#ifdef HAVE_NETWORKING
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_NETPLAY_EXTRA,         PARSE_ONLY_BOOL,  false },
-#endif
-               {MENU_ENUM_LABEL_NOTIFICATION_SHOW_WHEN_MENU_IS_ALIVE,    PARSE_ONLY_BOOL,  false },
-            };
-
-            for (i = 0; i < ARRAY_SIZE(build_list); i++)
-            {
-               switch (build_list[i].enum_idx)
-               {
-                  case MENU_ENUM_LABEL_FPS_UPDATE_INTERVAL:
-                     if (notifications_active && video_fps_show)
-                        build_list[i].checked = true;
-                     break;
-                  case MENU_ENUM_LABEL_MEMORY_UPDATE_INTERVAL:
-                     if (notifications_active && video_memory_show)
-                        build_list[i].checked = true;
-                     break;
-                  case MENU_ENUM_LABEL_STATISTICS_SHOW:
-                     if (notifications_active && video_font_enable)
-                        build_list[i].checked = true;
-                     break;
-#ifdef HAVE_GFX_WIDGETS
-#ifdef HAVE_NETWORKING
-                  case MENU_ENUM_LABEL_NETPLAY_PING_SHOW:
-                     if (widgets_active)
-                        build_list[i].checked = true;
-                     break;
-#endif
-                  case MENU_ENUM_LABEL_MENU_SHOW_LOAD_CONTENT_ANIMATION:
-                     if (widgets_active)
-                        build_list[i].checked = true;
-                     break;
-#ifdef HAVE_SCREENSHOTS
-                  case MENU_ENUM_LABEL_NOTIFICATION_SHOW_SCREENSHOT_DURATION:
-                     if (widgets_active && notification_show_screenshot)
-                        build_list[i].checked = true;
-                     break;
-                  case MENU_ENUM_LABEL_NOTIFICATION_SHOW_SCREENSHOT_FLASH:
-                     if (widgets_active && notification_show_screenshot)
-                        build_list[i].checked = true;
-                     break;
-#endif
-#endif
-                  default:
-                     if (notifications_active)
-                        build_list[i].checked = true;
-                     break;
-               }
-            }
-
-            for (i = 0; i < ARRAY_SIZE(build_list); i++)
-            {
-               if (!build_list[i].checked && !include_everything)
-                  continue;
-
-               if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                        build_list[i].enum_idx,  build_list[i].parse_type,
-                        false) == 0)
-                  count++;
-            }
-         }
-         break;
+      
       case DISPLAYLIST_CONFIGURATIONS_LIST:
          if (menu_entries_append_enum(list,
                   msg_hash_to_str(MENU_ENUM_LABEL_VALUE_CONFIGURATIONS),
@@ -12933,7 +12914,6 @@ bool menu_displaylist_ctl(enum menu_displaylist_ctl_state type,
       case DISPLAYLIST_SHADER_PRESET_REMOVE:
       case DISPLAYLIST_INPUT_HOTKEY_BINDS_LIST:
       case DISPLAYLIST_INPUT_TURBO_FIRE_SETTINGS_LIST:
-      case DISPLAYLIST_INPUT_HAPTIC_FEEDBACK_SETTINGS_LIST:
       case DISPLAYLIST_PLAYLIST_SETTINGS_LIST:
       case DISPLAYLIST_SUBSYSTEM_SETTINGS_LIST:
 #ifdef HAVE_MIST
