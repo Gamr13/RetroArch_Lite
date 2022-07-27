@@ -16606,7 +16606,7 @@ static bool setting_append_list(
             (*list)[list_info->index - 1].ui_type   = ST_UI_TYPE_UINT_COMBOBOX;
        }
 #endif
-         if (string_is_equal(settings->arrays.menu_driver, "ozone"))
+         /* if (string_is_equal(settings->arrays.menu_driver, "ozone"))
          {
             CONFIG_BOOL(
                   list, list_info,
@@ -16625,7 +16625,7 @@ static bool setting_append_list(
             (*list)[list_info->index - 1].action_ok     = &setting_bool_action_left_with_refresh;
             (*list)[list_info->index - 1].action_left   = &setting_bool_action_left_with_refresh;
             (*list)[list_info->index - 1].action_right  = &setting_bool_action_right_with_refresh;
-         }
+         } */
 
             CONFIG_BOOL(
                   list, list_info,

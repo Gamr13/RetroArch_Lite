@@ -6892,6 +6892,40 @@ unsigned menu_displaylist_build_list(
 
          break;
       case DISPLAYLIST_INPUT_SETTINGS_LIST:
+
+         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
+            MENU_ENUM_LABEL_INPUT_AUTO_GAME_FOCUS,
+            PARSE_ONLY_UINT, false) == 0)
+            count++;
+
+         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
+            MENU_ENUM_LABEL_INPUT_MENU_SETTINGS,
+            PARSE_ACTION, false) == 0)
+            count++;
+
+         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
+            MENU_ENUM_LABEL_INPUT_HOTKEY_BINDS,
+            PARSE_ACTION, false) == 0)
+            count++;
+
+         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
+            MENU_ENUM_LABEL_INPUT_TURBO_FIRE_SETTINGS,
+            PARSE_ACTION, false) == 0)
+            count++;
+
+         {
+            unsigned user;
+            unsigned max_users = settings->uints.input_max_users;
+            for (user = 0; user < max_users; user++)
+            {
+               if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
+                  (enum msg_hash_enums)(MENU_ENUM_LABEL_INPUT_USER_1_BINDS + user),
+                  PARSE_ACTION, false) != -1)
+                  count++;
+            }
+
+         }
+
          if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
                   MENU_ENUM_LABEL_INPUT_MAX_USERS,
                   PARSE_ONLY_UINT, false) == 0)
@@ -6998,22 +7032,6 @@ unsigned menu_displaylist_build_list(
                   PARSE_ONLY_BOOL, false) == 0)
             count++;
 #endif
-         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                  MENU_ENUM_LABEL_INPUT_AUTO_GAME_FOCUS,
-                  PARSE_ONLY_UINT, false) == 0)
-            count++;
-         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                  MENU_ENUM_LABEL_INPUT_MENU_SETTINGS,
-                  PARSE_ACTION, false) == 0)
-            count++;
-         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                  MENU_ENUM_LABEL_INPUT_HOTKEY_BINDS,
-                  PARSE_ACTION, false) == 0)
-            count++;
-         if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                  MENU_ENUM_LABEL_INPUT_TURBO_FIRE_SETTINGS,
-                  PARSE_ACTION, false) == 0)
-            count++;
 
 #ifdef HAVE_LIBNX
          {
@@ -7036,19 +7054,6 @@ unsigned menu_displaylist_build_list(
             }
          }
 #endif
-
-         {
-            unsigned user;
-            unsigned max_users          = settings->uints.input_max_users;
-            for (user = 0; user < max_users; user++)
-            {
-               if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
-                        (enum msg_hash_enums)(MENU_ENUM_LABEL_INPUT_USER_1_BINDS + user),
-                        PARSE_ACTION, false) != -1)
-                  count++;
-            }
-
-         }
          break;
       case DISPLAYLIST_ACCESSIBILITY_SETTINGS_LIST:
          {
@@ -9473,6 +9478,7 @@ unsigned menu_displaylist_build_list(
                {MENU_ENUM_LABEL_DRIVER_SETTINGS,             PARSE_ACTION, true},
                {MENU_ENUM_LABEL_VIDEO_SETTINGS,              PARSE_ACTION, true},
                {MENU_ENUM_LABEL_AUDIO_SETTINGS,              PARSE_ACTION, true},
+               {MENU_ENUM_LABEL_USER_INTERFACE_SETTINGS,     PARSE_ACTION, true},
                {MENU_ENUM_LABEL_INPUT_SETTINGS,              PARSE_ACTION, true},
                {MENU_ENUM_LABEL_LATENCY_SETTINGS,            PARSE_ACTION, true},
                {MENU_ENUM_LABEL_CORE_SETTINGS,               PARSE_ACTION, true},
@@ -9483,7 +9489,6 @@ unsigned menu_displaylist_build_list(
                {MENU_ENUM_LABEL_FRAME_THROTTLE_SETTINGS,     PARSE_ACTION, true},
                {MENU_ENUM_LABEL_RECORDING_SETTINGS,          PARSE_ACTION, true},
                {MENU_ENUM_LABEL_ONSCREEN_DISPLAY_SETTINGS,   PARSE_ACTION, true},
-               {MENU_ENUM_LABEL_USER_INTERFACE_SETTINGS,     PARSE_ACTION, true},
                {MENU_ENUM_LABEL_AI_SERVICE_SETTINGS,         PARSE_ACTION, true},
                {MENU_ENUM_LABEL_ACCESSIBILITY_SETTINGS,      PARSE_ACTION, true},
                {MENU_ENUM_LABEL_POWER_MANAGEMENT_SETTINGS,   PARSE_ACTION, true},
