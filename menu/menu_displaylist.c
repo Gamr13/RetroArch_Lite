@@ -1689,14 +1689,15 @@ static unsigned menu_displaylist_parse_system_info(file_list_t *list)
       char cpu_arch_str[PATH_MAX_LENGTH];
       char cpu_text_str[PATH_MAX_LENGTH];
       strlcpy(cpu_text_str,
-            msg_hash_to_str(MENU_ENUM_LABEL_VALUE_CPU_ARCHITECTURE),
+            msg_hash_to_str(
+               MENU_ENUM_LABEL_VALUE_CPU_ARCHITECTURE),
             sizeof(cpu_text_str));
 
       frontend_driver_get_cpu_architecture_str(
             cpu_arch_str, sizeof(cpu_arch_str));
 
       strlcpy(cpu_str, cpu_text_str, sizeof(cpu_str));
-      strlcat(cpu_str, " ", sizeof(cpu_str));
+      strlcat(cpu_str, ": ", sizeof(cpu_str));
       strlcat(cpu_str, cpu_arch_str, sizeof(cpu_str));
 
       if (menu_entries_append_enum(list, cpu_str,
@@ -1708,7 +1709,7 @@ static unsigned menu_displaylist_parse_system_info(file_list_t *list)
    {
       char cpu_str[PATH_MAX_LENGTH];
       unsigned         amount_cores = cpu_features_get_core_amount();
-
+      
       cpu_str[0] = '\0';
 
       snprintf(cpu_str, sizeof(cpu_str),
