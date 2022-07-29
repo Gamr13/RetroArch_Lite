@@ -779,20 +779,6 @@ static float ozone_sidebar_gradient_bottom_solarized_light[16]        = {
       1.0000000, 1.0000000, 0.9294118, 1.0f,
 };
 
-static float ozone_sidebar_gradient_top_purple_rain[16] = {
-      0.0862745, 0.0, 0.1294117, 1.0f,
-      0.0862745, 0.0, 0.1294117, 1.0f,
-      0.0862745, 0.0, 0.1294117, 1.0f,
-      0.0862745, 0.0, 0.1294117, 1.0f,
-};
-
-static float ozone_sidebar_gradient_bottom_purple_rain[16] = {
-      0.0862745, 0.0, 0.1294117, 1.0f,
-      0.0862745, 0.0, 0.1294117, 1.0f,
-      0.0862745, 0.0, 0.1294117, 1.0f,
-      0.0862745, 0.0, 0.1294117, 1.0f,
-};
-
 static float ozone_sidebar_background_gray[16]                        = 
 COLOR_HEX_TO_FLOAT(0x101010, 0.0f);
 
@@ -9083,6 +9069,7 @@ static void ozone_render(void *data,
                      /* If this is a playlist, must update thumbnails */
                      if (ozone->is_playlist && (ozone->depth == 1 || ozone->depth == 4))
                      {
+                        ozone->skip_thumbnail_reset = false;
                         ozone_set_thumbnail_content(ozone, "");
                         ozone_update_thumbnail_image(ozone);
                      }
