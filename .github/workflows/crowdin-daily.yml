@@ -1,3 +1,5 @@
+/*
+
 # Download translations from Crowdin and push to GitHub
 
 name: Crowdin Daily Workflow
@@ -36,3 +38,5 @@ jobs:
           git add .
           git commit -m "Fetch translations from Crowdin"
           git push
+
+*/

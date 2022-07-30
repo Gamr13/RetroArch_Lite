@@ -1,3 +1,5 @@
+/*
+
 name: CI PSP
 
 on:
@@ -45,3 +47,5 @@ jobs:
         path: |
           kernel_functions.prx
           EBOOT.PBP
+
+*/

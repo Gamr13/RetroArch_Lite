@@ -1,3 +1,5 @@
+/*
+
 name: CI PS2
 
 on:
@@ -39,3 +41,5 @@ jobs:
         path: |
           raboot.elf
           retroarchps2.elf
+          
+*/

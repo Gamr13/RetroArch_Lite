@@ -1,3 +1,5 @@
+/*
+
 # Validates compilation of RetroArch binary
 
 name: RetroArch CI
@@ -27,3 +29,5 @@ jobs:
         run: ./configure
       - name: Build
         run: make C89_BUILD=1
+
+*/

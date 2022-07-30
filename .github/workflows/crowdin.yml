@@ -1,3 +1,5 @@
+/*
+
 # Upload sources to Crowdin for translation
 
 name: Crowdin Workflow
@@ -32,3 +34,5 @@ jobs:
         run: |
           cd intl
           python3 crowdin_sync.py "$CROWDIN_API_KEY"
+
+*/
