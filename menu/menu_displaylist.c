@@ -9325,18 +9325,12 @@ unsigned menu_displaylist_build_list(
          break;
       
       case DISPLAYLIST_CONFIGURATIONS_LIST:
-         if (menu_entries_append_enum(list,
+         /* if (menu_entries_append_enum(list,
                   msg_hash_to_str(MENU_ENUM_LABEL_VALUE_CONFIGURATIONS),
                   msg_hash_to_str(MENU_ENUM_LABEL_CONFIGURATIONS),
                   MENU_ENUM_LABEL_CONFIGURATIONS,
                   MENU_SETTING_ACTION, 0, 0))
-            count++;
-         if (menu_entries_append_enum(list,
-                  msg_hash_to_str(MENU_ENUM_LABEL_VALUE_RESET_TO_DEFAULT_CONFIG),
-                  msg_hash_to_str(MENU_ENUM_LABEL_RESET_TO_DEFAULT_CONFIG),
-                  MENU_ENUM_LABEL_RESET_TO_DEFAULT_CONFIG,
-                  MENU_SETTING_ACTION, 0, 0))
-            count++;
+            count++; */
          if (menu_entries_append_enum(list,
                   msg_hash_to_str(MENU_ENUM_LABEL_VALUE_SAVE_CURRENT_CONFIG),
                   msg_hash_to_str(MENU_ENUM_LABEL_SAVE_CURRENT_CONFIG),
@@ -9344,11 +9338,17 @@ unsigned menu_displaylist_build_list(
                   MENU_SETTING_ACTION, 0, 0))
             count++;
          if (menu_entries_append_enum(list,
+             msg_hash_to_str(MENU_ENUM_LABEL_VALUE_RESET_TO_DEFAULT_CONFIG),
+             msg_hash_to_str(MENU_ENUM_LABEL_RESET_TO_DEFAULT_CONFIG),
+             MENU_ENUM_LABEL_RESET_TO_DEFAULT_CONFIG,
+             MENU_SETTING_ACTION, 0, 0))
+             count++;
+         /* if (menu_entries_append_enum(list,
                   msg_hash_to_str(MENU_ENUM_LABEL_VALUE_SAVE_NEW_CONFIG),
                   msg_hash_to_str(MENU_ENUM_LABEL_SAVE_NEW_CONFIG),
                   MENU_ENUM_LABEL_SAVE_NEW_CONFIG,
                   MENU_SETTING_ACTION, 0, 0))
-            count++;
+            count++; */
          break;
       case DISPLAYLIST_PRIVACY_SETTINGS_LIST:
          {
@@ -9809,8 +9809,8 @@ unsigned menu_displaylist_build_list(
       case DISPLAYLIST_CORE_SETTINGS_LIST:
          {
             menu_displaylist_build_info_t build_list[] = {
-               {MENU_ENUM_LABEL_CORE_INFO_CACHE_ENABLE,            PARSE_ONLY_BOOL},
-               {MENU_ENUM_LABEL_CHECK_FOR_MISSING_FIRMWARE,        PARSE_ONLY_BOOL},
+               /* {MENU_ENUM_LABEL_CORE_INFO_CACHE_ENABLE,            PARSE_ONLY_BOOL},
+               {MENU_ENUM_LABEL_CHECK_FOR_MISSING_FIRMWARE,        PARSE_ONLY_BOOL}, */
                {MENU_ENUM_LABEL_CORE_OPTION_CATEGORY_ENABLE,       PARSE_ONLY_BOOL},
                {MENU_ENUM_LABEL_DRIVER_SWITCH_ENABLE,              PARSE_ONLY_BOOL},
                {MENU_ENUM_LABEL_VIDEO_ALLOW_ROTATE,                PARSE_ONLY_BOOL},
