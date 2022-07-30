@@ -175,7 +175,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_CONFIGURATIONS_LIST,
-   "Save, load or reset retroarch.cfg."
+   "Save or reset retroarch.cfg."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_HELP_LIST,
