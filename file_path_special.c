@@ -276,7 +276,7 @@ void fill_pathname_application_special(char *s,
 #else
                /* Otherwise, use large 256x256 icons */
                fill_pathname_join_special(s5, dir_assets, "xmb", sizeof(s5));
-               fill_pathname_join_special(s6, "monochrome", "png", sizeof(s6));
+               fill_pathname_join_special(s6, "daite", "png", sizeof(s6));
 #endif
                fill_pathname_join_special(s, s5, s6, len);
             }
@@ -301,7 +301,7 @@ void fill_pathname_application_special(char *s,
 #else
             /* Otherwise, use large 256x256 icons */
             fill_pathname_join_special(s5, dir_assets, "xmb", sizeof(s5));
-            fill_pathname_join_special(s6, "monochrome", "png", sizeof(s6));
+            fill_pathname_join_special(s6, "daite", "png", sizeof(s6));
 #endif
             fill_pathname_join_special(s, s5, s6, len);
          }
