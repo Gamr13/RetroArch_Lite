@@ -576,7 +576,7 @@
 
 #ifdef HAVE_OZONE
 /* Ozone colour theme: 1 == Basic Black */
-#define DEFAULT_OZONE_COLOR_THEME 1
+#define DEFAULT_OZONE_COLOR_THEME 10
 #define DEFAULT_OZONE_COLLAPSE_SIDEBAR false
 #define DEFAULT_OZONE_TRUNCATE_PLAYLIST_NAME true
 #define DEFAULT_OZONE_SORT_AFTER_TRUNCATE_PLAYLIST_NAME true
@@ -777,8 +777,8 @@ static const unsigned xmb_menu_layout       = 2;
 #else
 static const unsigned xmb_menu_layout       = 0;
 #endif
-static const unsigned xmb_icon_theme        = XMB_ICON_THEME_MONOCHROME;
-static const unsigned xmb_theme             = XMB_THEME_ELECTRIC_BLUE;
+static const unsigned xmb_icon_theme        = XMB_ICON_THEME_DAITE;
+static const unsigned xmb_theme             = XMB_THEME_DARK_PURPLE;
 
 #if defined(HAVE_LAKKA) || defined(__arm__) || defined(__PPC64__) || defined(__ppc64__) || defined(__powerpc64__) || defined(__powerpc__) || defined(__ppc__) || defined(__POWERPC__)
 #define DEFAULT_XMB_SHADOWS_ENABLE false
@@ -861,7 +861,7 @@ static const bool default_screenshots_in_content_dir = false;
 #elif TARGET_OS_TV
 #define DEFAULT_MENU_TOGGLE_GAMEPAD_COMBO INPUT_COMBO_DOWN_Y_L_R
 #else
-#define DEFAULT_MENU_TOGGLE_GAMEPAD_COMBO INPUT_COMBO_NONE
+#define DEFAULT_MENU_TOGGLE_GAMEPAD_COMBO INPUT_COMBO_START_SELECT
 #endif
 
 #define DEFAULT_QUIT_GAMEPAD_COMBO INPUT_COMBO_NONE
