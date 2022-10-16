@@ -8361,6 +8361,10 @@ MSG_HASH(
    "English"
 )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_LANG_BRITISH_ENGLISH,
+   "English (United Kingdom)"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_LANG_ESPERANTO,
    "Esperanto - Esperanto"
 )

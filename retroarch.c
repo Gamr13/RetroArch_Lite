@@ -290,25 +290,6 @@ enum
 extern const bluetooth_driver_t *bluetooth_drivers[];
 #endif
 
-
-enum rarch_state_flags
-{
-   RARCH_FLAGS_HAS_SET_USERNAME             = (1 << 0),
-   RARCH_FLAGS_HAS_SET_VERBOSITY            = (1 << 1),
-   RARCH_FLAGS_HAS_SET_LIBRETRO             = (1 << 2),
-   RARCH_FLAGS_HAS_SET_LIBRETRO_DIRECTORY   = (1 << 3),
-   RARCH_FLAGS_HAS_SET_SAVE_PATH            = (1 << 4),
-   RARCH_FLAGS_HAS_SET_STATE_PATH           = (1 << 5),
-   RARCH_FLAGS_HAS_SET_UPS_PREF             = (1 << 6),
-   RARCH_FLAGS_HAS_SET_BPS_PREF             = (1 << 7),
-   RARCH_FLAGS_HAS_SET_IPS_PREF             = (1 << 8),
-   RARCH_FLAGS_HAS_SET_LOG_TO_FILE          = (1 << 9),
-   RARCH_FLAGS_UPS_PREF                     = (1 << 10),
-   RARCH_FLAGS_BPS_PREF                     = (1 << 11),
-   RARCH_FLAGS_IPS_PREF                     = (1 << 12),
-   RARCH_FLAGS_BLOCK_CONFIG_READ            = (1 << 13)
-};
-
 /* MAIN GLOBAL VARIABLES */
 struct rarch_state
 {
@@ -357,6 +338,12 @@ access_state_t *access_state_get_ptr(void)
 global_t *global_get_ptr(void)
 {
    return &global_driver_st;
+}
+
+uint16_t retroarch_get_flags(void)
+{
+   struct rarch_state *p_rarch = &rarch_st;
+   return p_rarch->flags;
 }
 
 struct retro_perf_counter **retro_get_perf_counter_rarch(void)
@@ -4892,9 +4879,10 @@ static bool retroarch_parse_input_and_config(
                   input_driver_state_t *input_st = input_state_get_ptr();
                   strlcpy(input_st->bsv_movie_state.movie_start_path, optarg,
                         sizeof(input_st->bsv_movie_state.movie_start_path));
-
-                  input_st->bsv_movie_state.movie_start_playback  = true;
-                  input_st->bsv_movie_state.movie_start_recording = false;
+                  input_st->bsv_movie_state.flags |=
+                      BSV_FLAG_MOVIE_START_PLAYBACK;
+                  input_st->bsv_movie_state.flags &=
+                     ~BSV_FLAG_MOVIE_START_RECORDING;
                }
 #endif
                break;
@@ -4904,9 +4892,10 @@ static bool retroarch_parse_input_and_config(
                   input_driver_state_t *input_st = input_state_get_ptr();
                   strlcpy(input_st->bsv_movie_state.movie_start_path, optarg,
                         sizeof(input_st->bsv_movie_state.movie_start_path));
-
-                  input_st->bsv_movie_state.movie_start_playback  = false;
-                  input_st->bsv_movie_state.movie_start_recording = true;
+                  input_st->bsv_movie_state.flags &=
+                     ~BSV_FLAG_MOVIE_START_PLAYBACK;
+                  input_st->bsv_movie_state.flags |=
+                     BSV_FLAG_MOVIE_START_RECORDING;
                }
 #endif
                break;
@@ -5064,8 +5053,8 @@ static bool retroarch_parse_input_and_config(
             case RA_OPT_EOF_EXIT:
 #ifdef HAVE_BSV_MOVIE
                {
-                  input_driver_state_t *input_st = input_state_get_ptr();
-                  input_st->bsv_movie_state.eof_exit = true;
+                  input_driver_state_t *input_st   = input_state_get_ptr();
+                  input_st->bsv_movie_state.flags |= BSV_FLAG_MOVIE_EOF_EXIT;
                }
 #endif
                break;
@@ -5596,12 +5585,6 @@ bool retroarch_ctl(enum rarch_ctl_state state, void *data)
          return (input_state_get_ptr()->bsv_movie_state_handle != NULL);
 #endif
 #ifdef HAVE_PATCH
-      case RARCH_CTL_IS_BPS_PREF:
-         return ((p_rarch->flags & RARCH_FLAGS_BPS_PREF) > 0);
-      case RARCH_CTL_IS_UPS_PREF:
-         return ((p_rarch->flags & RARCH_FLAGS_UPS_PREF) > 0);
-      case RARCH_CTL_IS_IPS_PREF:
-         return ((p_rarch->flags & RARCH_FLAGS_IPS_PREF) > 0);
       case RARCH_CTL_UNSET_BPS_PREF:
          p_rarch->flags &= ~RARCH_FLAGS_BPS_PREF;
          break;
@@ -5641,8 +5624,6 @@ bool retroarch_ctl(enum rarch_ctl_state state, void *data)
                    (runloop_st->flags & RUNLOOP_FLAG_CORE_RUNNING)
                &&  (runloop_st->secondary_lib_handle != NULL);
 #endif
-      case RARCH_CTL_HAS_SET_USERNAME:
-         return ((p_rarch->flags & RARCH_FLAGS_HAS_SET_USERNAME) > 0);
       case RARCH_CTL_IS_INITED:
          return runloop_st->is_inited;
       case RARCH_CTL_MAIN_DEINIT:
@@ -6293,8 +6274,9 @@ enum retro_language rarch_get_language_from_iso(const char *iso639)
       {"sv", RETRO_LANGUAGE_SWEDISH},
       {"uk", RETRO_LANGUAGE_UKRAINIAN},
       {"cs", RETRO_LANGUAGE_CZECH},
-      {"val", RETRO_LANGUAGE_CATALAN_VALENCIA},
+      {"ca_valencia", RETRO_LANGUAGE_CATALAN_VALENCIA},
       {"ca", RETRO_LANGUAGE_CATALAN},
+      {"en_GB", RETRO_LANGUAGE_BRITISH_ENGLISH},
    };
 
    if (string_is_empty(iso639))

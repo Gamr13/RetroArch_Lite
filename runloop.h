@@ -246,6 +246,7 @@ struct runloop
 
    runloop_core_status_msg_t core_status_msg;
 
+   unsigned msg_queue_delay;
    unsigned pending_windowed_scale;
    unsigned max_frames;
    unsigned audio_latency;
@@ -305,8 +306,7 @@ struct runloop
 typedef struct runloop runloop_state_t;
 
 #ifdef HAVE_BSV_MOVIE
-#define BSV_MOVIE_IS_EOF() || (input_st->bsv_movie_state.movie_end && \
-input_st->bsv_movie_state.eof_exit)
+#define BSV_MOVIE_IS_EOF() || (((input_st->bsv_movie_state.flags & BSV_FLAG_MOVIE_END) && (input_st->bsv_movie_state.flags & BSV_FLAG_MOVIE_EOF_EXIT)))
 #else
 #define BSV_MOVIE_IS_EOF()
 #endif
