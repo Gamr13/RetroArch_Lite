@@ -67,6 +67,8 @@
 #define XMB_RIBBON_COLS 64
 #define XMB_RIBBON_VERTICES 2*XMB_RIBBON_COLS*XMB_RIBBON_ROWS-2*XMB_RIBBON_COLS
 
+#define XMB_TAB_MAX_LENGTH 255
+
 #ifndef XMB_DELAY
 #define XMB_DELAY 166.66667f
 #endif
@@ -340,6 +342,7 @@ typedef struct xmb_handle
 
    /* size of the current list */
    size_t list_size;
+   size_t tab_selection[XMB_TAB_MAX_LENGTH];
 
    int depth;
    int old_depth;
@@ -396,6 +399,7 @@ typedef struct xmb_handle
 
    /* Cached texts showing current entry index / current list size */
    char entry_index_str[32];
+   char entry_index_offset;
 
    /* These have to be huge, because runloop_st->name.savestate
     * has a hard-coded size of 8192...
@@ -1544,9 +1548,26 @@ static void xmb_selection_pointer_changed(
 
          /* Update entry index text */
          if (xmb->entry_idx_enabled)
-            snprintf(xmb->entry_index_str, sizeof(xmb->entry_index_str),
-                     "%lu/%lu", (unsigned long)selection + 1,
+         {
+            size_t entry_idx_selection = selection + 1;
+            unsigned entry_idx_offset  = xmb->entry_index_offset;
+            bool show_entry_idx        = true;
+
+            if (xmb->is_explore_list)
+            {
+               if (entry_idx_selection > entry_idx_offset)
+                  entry_idx_selection -= entry_idx_offset;
+               else
+                  show_entry_idx = false;
+            }
+
+            if (!show_entry_idx)
+               xmb->entry_index_str[0] = '\0';
+            else
+               snprintf(xmb->entry_index_str, sizeof(xmb->entry_index_str),
+                     "%lu/%lu", (unsigned long)entry_idx_selection,
                                 (unsigned long)xmb->list_size);
+         }
 
          ia                      = xmb->items_active_alpha;
          iz                      = xmb->items_active_zoom;
@@ -2097,12 +2118,27 @@ static void xmb_list_switch_horizontal_list(xmb_handle_t *xmb)
    }
 }
 
+static void xmb_tab_set_selection(void *data)
+{
+   xmb_handle_t *xmb = (xmb_handle_t*)data;
+
+   if (xmb)
+   {
+      size_t tab_selection = xmb->tab_selection[xmb->categories_selection_ptr];
+      if (tab_selection)
+      {
+         menu_navigation_set_selection(tab_selection);
+         xmb_selection_pointer_changed(xmb, false);
+      }
+   }
+}
+
 static void xmb_list_switch(xmb_handle_t *xmb)
 {
    gfx_animation_ctx_entry_t anim_entry;
    int dir                        = -1;
    file_list_t *selection_buf     = menu_entries_get_selection_buf_ptr(0);
-   size_t selection               = menu_navigation_get_selection();
+   size_t selection               = 0;
    settings_t       *settings     = config_get_ptr();
    bool menu_horizontal_animation = settings->bools.menu_horizontal_animation;
 
@@ -2111,6 +2147,12 @@ static void xmb_list_switch(xmb_handle_t *xmb)
       dir = 1;
 
    xmb->categories_active_idx += dir;
+
+   /* Restore last selection per tab */
+   xmb_tab_set_selection(xmb);
+
+   /* Selection needs to be taken after tab restore */
+   selection               = menu_navigation_get_selection();
 
    xmb_list_switch_horizontal_list(xmb);
 
@@ -2565,7 +2607,9 @@ static void xmb_populate_entries(void *data,
                       || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_IMAGES_LIST))
                       || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_MUSIC_LIST))
                       || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_VIDEO_LIST));
-   xmb->is_playlist = xmb->is_playlist && !string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_RDB_ENTRY_DETAIL));
+   xmb->is_playlist = xmb->is_playlist &&
+         !string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_INFORMATION)) &&
+         !string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_RDB_ENTRY_DETAIL));
 
    /* Determine whether this is a database manager list */
    was_db_manager_list     = xmb->is_db_manager_list && depth >= 4;
@@ -2607,7 +2651,7 @@ static void xmb_populate_entries(void *data,
       /* Quick Menu under Explore list must also be Quick Menu */
       xmb->is_quick_menu |= menu_is_nonrunning_quick_menu() || menu_is_running_quick_menu();
       if (!menu_explore_is_content_list())
-         xmb->is_explore_list = show_entry_idx = false;
+         xmb->is_explore_list = false;
       else if (!xmb->is_quick_menu)
          xmb->skip_thumbnail_reset = true;
    }
@@ -2632,12 +2676,38 @@ static void xmb_populate_entries(void *data,
    /* Determine whether to show entry index */
    /* Update list size & entry index texts */
    if ((xmb->entry_idx_enabled = show_entry_idx &&
+         !xmb->is_quick_menu &&
          (xmb->is_playlist || xmb->is_explore_list)))
    {
-      xmb->list_size = menu_entries_get_size();
-      snprintf(xmb->entry_index_str, sizeof(xmb->entry_index_str),
-            "%lu/%lu", (unsigned long)menu_navigation_get_selection() + 1,
-                       (unsigned long)xmb->list_size);
+      size_t entry_idx_selection = menu_navigation_get_selection() + 1;
+      size_t list_size           = menu_entries_get_size();
+      unsigned entry_idx_offset  = 0;
+
+      if (xmb->is_explore_list)
+      {
+         entry_idx_offset = 2;
+         if (string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_EXPLORE_LIST)) ||
+               xmb_horizontal_type == MENU_EXPLORE_TAB)
+            entry_idx_offset = 1;
+
+         if (entry_idx_selection > entry_idx_offset)
+            entry_idx_selection -= entry_idx_offset;
+         else
+            show_entry_idx = false;
+
+         if (list_size >= entry_idx_offset)
+            list_size           -= entry_idx_offset;
+      }
+
+      xmb->list_size          = list_size;
+      xmb->entry_index_offset = entry_idx_offset;
+
+      if (!show_entry_idx)
+         xmb->entry_index_str[0] = '\0';
+      else
+         snprintf(xmb->entry_index_str, sizeof(xmb->entry_index_str),
+            "%lu/%lu", (unsigned long)entry_idx_selection,
+                       (unsigned long)list_size);
    }
 
    /* By default, fullscreen thumbnails are only
@@ -3579,13 +3649,7 @@ static int xmb_draw_item(
          new_alpha = (node->y + scr_margin) / factor;
       /* Bottom */
       else if (i > current)
-         new_alpha = (height - node->y - scr_margin + icon_space) 
-            / factor;
-      /* Rest need to reset after vertical wrap-around */
-      else if (node->x == 0 
-            && node->alpha > 0 
-            && node->alpha != max_alpha)
-         new_alpha = max_alpha;
+         new_alpha = (height - node->y - scr_margin + icon_space) / factor;
 
       /* Limits */
       if (new_alpha < min_alpha)
@@ -3594,7 +3658,7 @@ static int xmb_draw_item(
          new_alpha = max_alpha;
 
       /* Horizontal animation requires breathing room on x-axis */
-      if (new_alpha != node->alpha && node->x > (-icon_space * 2) && node->x < (icon_space * 2))
+      if (node->x > (-icon_space * 2) && node->x < (icon_space * 2))
          node->alpha = node->label_alpha = new_alpha;
    }
 
@@ -3707,20 +3771,24 @@ static int xmb_draw_item(
    }
 
    /* Draw entry index of current selection */
-   if (i == current && xmb->entry_idx_enabled)
+   if (i == current &&
+         xmb->entry_idx_enabled &&
+         !string_is_empty(xmb->entry_index_str))
    {
+      float entry_idx_margin = 12 * xmb->last_scale_factor;
+
       /* Calculate position depending on the current
        * list and if Thumbnail Vertical Disposition
        * is enabled (branchless version) */
       float x_position         = (
-            video_width - xmb->margins_title_left) *
+            video_width - entry_idx_margin) *
          !menu_xmb_vertical_thumbnails +
          (node->x + xmb->margins_screen_left +
           xmb->icon_spacing_horizontal -
           xmb->margins_label_left) *
          menu_xmb_vertical_thumbnails;
       float y_position         = (
-            video_height - xmb->margins_title_bottom) *
+            video_height - entry_idx_margin) *
          !menu_xmb_vertical_thumbnails +
          (xmb->margins_screen_top + xmb->margins_label_top +
           xmb->icon_spacing_vertical * xmb->active_item_factor) *
@@ -6244,6 +6312,9 @@ static void *xmb_init(void **userdata, bool video_is_threaded)
    xmb->system_tab_end                = 0;
    xmb->tabs[xmb->system_tab_end]     = XMB_SYSTEM_TAB_MAIN;
 
+   for (i = 0; i < XMB_TAB_MAX_LENGTH; i++)
+      xmb->tab_selection[i]           = 0;
+
    if (      settings->bools.menu_content_show_settings 
          && !settings->bools.kiosk_mode_enable)
       xmb->tabs[++xmb->system_tab_end] = XMB_SYSTEM_TAB_SETTINGS;
@@ -7135,6 +7206,9 @@ static void xmb_list_cache(void *data, enum menu_list_type type, unsigned action
          break;
       case MENU_LIST_HORIZONTAL:
          xmb->categories_selection_ptr_old = xmb->categories_selection_ptr;
+
+         /* Remember last selection per tab */
+         xmb->tab_selection[xmb->categories_selection_ptr] = selection;
 
          switch (action)
          {
